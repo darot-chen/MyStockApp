@@ -8,11 +8,23 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    const MaterialColor textColor = MaterialColor(0xFFE53C49, <int, Color>{
+      50: Color(0xFFE53C49),
+      100: Color(0xFFE53C49),
+      200: Color(0xFFE53C49),
+      300: Color(0xFFE53C49),
+      400: Color(0xFFE53C49),
+      500: Color(0xFFE53C49),
+      600: Color(0xFFE53C49),
+      700: Color(0xFFE53C49),
+      800: Color(0xFFE53C49),
+      900: Color(0xFFE53C49),
+    });
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: textColor,
       ),
       home: NavigationTabBar(),
     );

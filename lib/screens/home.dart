@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_stock/components/my_app_bar.dart';
 import 'package:my_stock/databases/categories_data.dart';
-import 'package:my_stock/screens/add_product.dart';
+import 'package:my_stock/screens/add_product_screen.dart';
 
 class Home extends StatefulWidget {
   @override

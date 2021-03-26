@@ -11,7 +11,7 @@ List<Category> categories = [
     color: Colors.green,
   ),
   Category(
-    name: 'accessories',
+    name: 'Accessories',
     color: Colors.blue,
   ),
 ];

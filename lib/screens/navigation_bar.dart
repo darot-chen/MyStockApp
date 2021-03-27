@@ -50,13 +50,13 @@ class _NavigationTabBarState extends State<NavigationTabBar> {
             icon: Icon(
               Icons.add_business,
             ),
-            label: "Sales",
+            label: "Transactions",
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.assessment,
             ),
-            label: 'Report',
+            label: 'Reports',
           ),
           BottomNavigationBarItem(
             icon: Icon(

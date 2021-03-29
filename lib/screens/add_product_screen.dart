@@ -243,7 +243,7 @@ class _AddProductPageState extends State<AddProductPage> {
           ),
           Container(
             height: 36,
-            width: 90,
+            width: 170,
             child: TextField(
               autocorrect: true,
               decoration: InputDecoration(
@@ -491,7 +491,13 @@ class _AddProductPageState extends State<AddProductPage> {
         borderRadius: BorderRadius.circular(4),
       ),
       child: TextButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ProductDetailPage(),
+            ),
+          );
+        },
         child: Text(
           "Add Product",
           style: TextStyle(

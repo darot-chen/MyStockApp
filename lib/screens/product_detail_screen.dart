@@ -168,7 +168,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Container(
-        padding: EdgeInsets.only(left: 10,right: 10),
+        padding: EdgeInsets.only(left: 10, right: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -179,7 +179,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       ),
     );
   }
-  get _buildLifestatus{
+
+  get _buildLifestatus {
     return Container(
       width: 160,
       height: 30,
@@ -189,7 +190,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Container(
-        padding: EdgeInsets.only(left: 10,right: 10),
+        padding: EdgeInsets.only(left: 10, right: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -223,7 +224,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Container(
-        padding: EdgeInsets.only(left: 10,right: 10),
+        padding: EdgeInsets.only(left: 10, right: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -234,7 +235,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       ),
     );
   }
-  get _buildPrice{
+
+  get _buildPrice {
     return Container(
       width: 160,
       height: 30,
@@ -244,7 +246,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Container(
-        padding: EdgeInsets.only(left: 10,right: 10),
+        padding: EdgeInsets.only(left: 10, right: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -256,7 +258,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
-  get _buildSale{
+  get _buildSale {
     return Container(
       width: 360,
       height: 30,
@@ -266,7 +268,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         borderRadius: BorderRadius.circular(4),
       ),
       child: Container(
-        padding: EdgeInsets.only(left: 10,right: 10),
+        padding: EdgeInsets.only(left: 10, right: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'account_screen.dart';
 import 'home.dart';
 import 'report_screen.dart';
-import 'sales_screen.dart';
+import 'transaction_screen.dart';
 
 class NavigationTabBar extends StatefulWidget {
   const NavigationTabBar({

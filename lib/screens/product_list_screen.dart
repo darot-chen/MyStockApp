@@ -16,10 +16,6 @@ class ProductListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
-    DateFormat formater = DateFormat('dd/MMM/yyy');
-    String date = formater.format(now);
-
     return Scaffold(
       appBar: MyAppBar(
         title: title,

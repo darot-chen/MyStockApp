@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:my_stock/components/my_app_bar.dart';
 
+import 'product_in_screen.dart';
+
 class SaleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -51,7 +53,11 @@ class SaleScreen extends StatelessWidget {
                 buildButton(
                   title: 'Products In',
                   onTap: () {
-                    print('Product In tapped');
+                    Navigator.of(context, rootNavigator: true).push(
+                      MaterialPageRoute(
+                        builder: (context) => ProductInScreen(),
+                      ),
+                    );
                   },
                 ),
                 SizedBox(width: 10),

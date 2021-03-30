@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_stock/components/my_app_bar.dart';
-// import 'package:my_stock/screens/product_detail_screen.dart';
+import 'package:my_stock/screens/product_detail_screen.dart';
 
 class AddProductPage extends StatefulWidget {
   @override
@@ -534,7 +534,7 @@ class _AddProductPageState extends State<AddProductPage> {
       ),
       child: TextButton(
         onPressed: () {
-          // _sendText(context);
+          _sendText(context);
         },
         child: Text(
           "Add Product",
@@ -548,28 +548,28 @@ class _AddProductPageState extends State<AddProductPage> {
     );
   }
 
-  // void _sendText(BuildContext context) {
-  //   String nCategory = etCategory.text;
-  //   String nProductName = etProductName.text;
-  //   String nStock = etStock.text;
-  //   String nTakein = etTakein.text;
-  //   String nSoldout = etSoldout.text;
-  //   String nSize = etSize.text;
-  //   String nDescript = etDescript.text;
-  //   String nProductPhoto = etProductPhoto.text;
-  //   Navigator.of(context).push(
-  //     MaterialPageRoute(
-  //       builder: (context) => ProductDetailPage(
-  //         nCategoryText: nCategory,
-  //         nProductNameText: nProductName,
-  //         nStockText: nStock,
-  //         nTakeinText: nTakein,
-  //         nSoldOutText: nSoldout,
-  //         nSizeText: nSize,
-  //         nDescriptText: nDescript,
-  //         nProductPhotoText: nProductPhoto,
-  //       ),
-  //     ),
-  //   );
-  // }
+  void _sendText(BuildContext context) {
+    String nCategory = etCategory.text;
+    String nProductName = etProductName.text;
+    String nStock = etStock.text;
+    String nTakein = etTakein.text;
+    String nSoldout = etSoldout.text;
+    String nSize = etSize.text;
+    String nDescript = etDescript.text;
+    String nProductPhoto = etProductPhoto.text;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ProductDetailPage(
+          nCategoryText: nCategory,
+          nProductNameText: nProductName,
+          nStockText: nStock,
+          nTakeinText: nTakein,
+          nSoldOutText: nSoldout,
+          nSizeText: nSize,
+          nDescriptText: nDescript,
+          nProductPhotoText: nProductPhoto,
+        ),
+      ),
+    );
+  }
 }

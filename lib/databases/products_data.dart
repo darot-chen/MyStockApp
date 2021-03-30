@@ -2,13 +2,12 @@ import 'package:my_stock/models/product_model.dart';
 
 List<Product> products = [
   Product(
-    id: '#2021001',
-    name: 'Coca Cola#1',
-    date: DateTime.now(),
-    desc: 'Caca buy from someone with low price',
-    numOfStock: 50,
-    image: 'assets/images/coca.png'
-  ),
+      id: '#2021001',
+      name: 'Coca Cola#1',
+      date: DateTime.now(),
+      desc: 'Caca buy from someone with low price',
+      numOfStock: 50,
+      image: 'assets/images/coca.png'),
   Product(
     id: '#2021002',
     name: 'Pepsi#1',

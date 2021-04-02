@@ -34,10 +34,10 @@ class MyProductListTile extends StatelessWidget {
           height: 54,
           width: 54,
           decoration: BoxDecoration(
-            color: Colors.red,
+            color: Colors.grey[200],
             borderRadius: BorderRadius.circular(10),
             image: DecorationImage(
-              image: AssetImage(image),
+              image: AssetImage('assets/images/box.png'),
             ),
           ),
         ),

@@ -3,6 +3,8 @@ import 'package:my_stock/components/my_app_bar.dart';
 import 'package:my_stock/databases/categories_data.dart';
 import 'package:my_stock/screens/product_list_screen.dart';
 
+import 'add_product_screen.dart';
+
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
@@ -31,31 +33,37 @@ class _HomeState extends State<Home> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context, rootNavigator: true).push(
+            MaterialPageRoute(
+              builder: (context) => AddProductPage(),
+            ),
+          );
+        },
         foregroundColor: Colors.white,
         child: Icon(Icons.add),
       ),
     );
   }
 
-  Container catCard(int index) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: categories[index].color.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Center(
-        child: TextButton(
-          onPressed: () {
-            Navigator.of(context, rootNavigator: true).push(
-              MaterialPageRoute(
-                builder: (context) => ProductListScreen(
-                  title: categories[index].name,
-                ),
-              ),
-            );
-          },
+  InkWell catCard(int index) {
+    return InkWell(
+      onTap: () {
+        Navigator.of(context, rootNavigator: true).push(
+          MaterialPageRoute(
+            builder: (context) => ProductListScreen(
+              title: categories[index].name,
+            ),
+          ),
+        );
+      },
+      child: Container(
+        padding: EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: categories[index].color.withOpacity(0.8),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Center(
           child: Text(
             categories[index].name,
             style: TextStyle(

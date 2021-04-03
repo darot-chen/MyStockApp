@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_stock/components/my_app_bar.dart';
 import 'package:my_stock/databases/categories_data.dart';
+import 'package:my_stock/screens/add_product_screen.dart';
 import 'package:my_stock/screens/product_list_screen.dart';
 
 class Home extends StatefulWidget {
@@ -31,7 +32,10 @@ class _HomeState extends State<Home> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => AddProductPage()));
+        },
         foregroundColor: Colors.white,
         child: Icon(Icons.add),
       ),

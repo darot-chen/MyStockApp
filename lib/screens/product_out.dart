@@ -3,13 +3,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:my_stock/components/my_app_bar.dart';
-import 'package:my_stock/components/my_dropdown.dart';
 import 'package:my_stock/components/product_list_tile.dart';
 import 'package:my_stock/models/product_model.dart';
 import 'package:my_stock/notifier/product_notifier.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-class ProductInScreen extends HookWidget {
+class ProductOutScreen extends HookWidget {
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController quantiryController = TextEditingController();
@@ -30,12 +29,11 @@ class ProductInScreen extends HookWidget {
         );
         if (form.validate()) {
           form.save();
-          choosedProduct.numOfStock += _quantity;
+          choosedProduct.numOfStock -= _quantity;
           choosedProduct.date = calendarController.selectedDate;
-          notifier.updateTotalQuantityIn(_quantity);
+          notifier.updateTotalQuantityOut(_quantity);
           notifier.updateProduct(choosedProduct);
           notifier.choosedProduct = null;
-
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Stock Updated'),
@@ -61,7 +59,7 @@ class ProductInScreen extends HookWidget {
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        appBar: MyAppBar(title: 'Product In'),
+        appBar: MyAppBar(title: 'Product Out'),
         body: Column(
           children: [
             chooseProductBtn(
@@ -76,9 +74,9 @@ class ProductInScreen extends HookWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      quantity(
+                      addQuantity(
                         isValidate: notifier.isValidate,
-                        labelTitle: 'Quantity In',
+                        labelTitle: 'Quantity Out',
                         message: 'Please input number',
                         controller: quantiryController,
                         keyBoardType: TextInputType.number,
@@ -102,28 +100,30 @@ class ProductInScreen extends HookWidget {
     );
   }
 
-  Container lifeStatus() {
-    return Container(
-      height: 58,
-      width: 170,
-      alignment: Alignment.center,
-      child: MyDropDown(
-        height: 48,
-        items: ['Long', 'Medium', 'Short'],
-        value: _lifeStatus,
-        onChanged: (value) {
-          _lifeStatus = value;
-        },
-        hintText: Text(
-          'Life Status',
+  Column currentQuantity({String currentQuantity}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Current Quantity",
           style: TextStyle(
             fontSize: 18,
             color: Color(0xFF4B5B75),
             fontWeight: FontWeight.w700,
           ),
         ),
-        icon: Icon(Icons.arrow_drop_down_circle),
-      ),
+        SizedBox(height: 5),
+        Container(
+          height: 36,
+          width: 170,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Color(0xFFE1E1E1),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(currentQuantity),
+        ),
+      ],
     );
   }
 
@@ -173,34 +173,7 @@ class ProductInScreen extends HookWidget {
     );
   }
 
-  Column currentQuantity({String currentQuantity}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Current Quantity",
-          style: TextStyle(
-            fontSize: 18,
-            color: Color(0xFF4B5B75),
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        SizedBox(height: 5),
-        Container(
-          height: 36,
-          width: 170,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Color(0xFFE1E1E1),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Text(currentQuantity ?? ''),
-        ),
-      ],
-    );
-  }
-
-  Column quantity({
+  Column addQuantity({
     String labelTitle,
     String message,
     TextInputType keyBoardType,

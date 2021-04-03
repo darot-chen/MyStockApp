@@ -84,7 +84,6 @@ class ProductListScreen extends StatelessWidget {
             margin: EdgeInsets.all(5),
             child: MyProductListTile(
               date: date,
-              image: product.image,
               title: product.name,
               id: product.id,
               subTitle: product.desc,

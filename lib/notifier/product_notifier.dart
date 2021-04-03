@@ -7,11 +7,18 @@ class ProductNotifier extends ChangeNotifier {
   bool isValidate = true;
   List<Product> productsList;
   Product choosedProduct;
+  int totalQuantityIn = 0;
+  int totalQuantityOut = 0;
+  int totalQuantityInHand = 0;
 
   load() async {
     setLoading(true);
     await Future.delayed(Duration(seconds: 3)).then((value) {
       this.productsList = Product.prodcut;
+      for (var product in this.productsList) {
+        updateTotalQuantityIn(product.numOfStock);
+        // totalQuantityInHand += product.numOfStock;
+      }
       setLoading(false);
     });
   }
@@ -37,9 +44,23 @@ class ProductNotifier extends ChangeNotifier {
     this.loading = loading;
     notifyListeners();
   }
+
+  updateTotalQuantityIn(int quantity) {
+    this.totalQuantityIn += quantity;
+    this.totalQuantityInHand += quantity;
+    notifyListeners();
+  }
+
+  updateTotalQuantityOut(int quantity) {
+    this.totalQuantityInHand -= quantity;
+    this.totalQuantityOut += quantity;
+    notifyListeners();
+  }
 }
 
-final productNotifier = ChangeNotifierProvider<ProductNotifier>((ref) {
-  var notifier = ProductNotifier()..load();
-  return notifier;
-});
+final productNotifier = ChangeNotifierProvider<ProductNotifier>(
+  (ref) {
+    var notifier = ProductNotifier()..load();
+    return notifier;
+  },
+);

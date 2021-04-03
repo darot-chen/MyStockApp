@@ -4,7 +4,6 @@ class MyProductListTile extends StatelessWidget {
   const MyProductListTile({
     Key key,
     @required this.id,
-    @required this.image,
     @required this.title,
     @required this.date,
     @required this.subTitle,
@@ -12,7 +11,6 @@ class MyProductListTile extends StatelessWidget {
     @required this.trailingTitle,
   }) : super(key: key);
 
-  final String image;
   final String date;
   final String title;
   final String id;

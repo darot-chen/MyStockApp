@@ -91,7 +91,7 @@ class ProductDetailPage extends StatelessWidget {
     return Container(
       child: Column(
         children: [
-          Image.asset('assets/cocacola.jpg',
+          Image.asset('assets/images/coca.png',
             cacheWidth: 290,
             cacheHeight: 211,
           ),
@@ -125,7 +125,7 @@ class ProductDetailPage extends StatelessWidget {
       child: Column(
         children: [
           Image.asset(
-            'nProductPhotoText',
+            'assets/images/coca.png',
             cacheWidth: 50,
             cacheHeight: 50,
           ),

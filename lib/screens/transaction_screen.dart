@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:my_stock/components/my_app_bar.dart';
 import 'package:my_stock/notifier/product_notifier.dart';
+import 'package:my_stock/screens/product_out.dart';
 
 import 'product_in_screen.dart';
 
@@ -19,10 +20,10 @@ class SaleScreen extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           else {
-            int totalInStock = 0;
-            for (var product in productList) {
-              totalInStock += product.numOfStock;
-            }
+            // int totalInStock = 0;
+            // for (var product in productList) {
+            //   totalInStock += product.numOfStock;
+            // }
             return Column(
               children: [
                 Container(
@@ -55,9 +56,10 @@ class SaleScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              buildMyText(text: '$totalInStock'),
-                              buildMyText(text: '20'),
-                              buildMyText(text: '$totalInStock'),
+                              buildMyText(text: '${notifier.totalQuantityIn}'),
+                              buildMyText(text: '${notifier.totalQuantityOut}'),
+                              buildMyText(
+                                  text: '${notifier.totalQuantityInHand}'),
                             ],
                           ),
                         ],
@@ -85,7 +87,11 @@ class SaleScreen extends StatelessWidget {
                       buildButton(
                         title: 'Product Out',
                         onTap: () {
-                          print('Product Out tapped');
+                          Navigator.of(context, rootNavigator: true).push(
+                            MaterialPageRoute(
+                              builder: (context) => ProductOutScreen(),
+                            ),
+                          );
                         },
                       ),
                     ],

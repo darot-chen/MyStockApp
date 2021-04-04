@@ -3,7 +3,6 @@ class Product {
   String name;
   DateTime date;
   String desc;
-  String image;
   int numOfStock;
 
   Product({
@@ -11,26 +10,24 @@ class Product {
     this.name,
     this.date,
     this.desc,
-    this.image,
     this.numOfStock,
   });
 
   static List<Product> get prodcut {
     return [
       Product(
-          id: '#2021001',
-          name: 'Coca Cola#1',
-          date: DateTime.now(),
-          desc: 'Caca buy from someone with low price',
-          numOfStock: 50,
-          image: 'assets/images/coca.png'),
+        id: '#2021001',
+        name: 'Coca Cola#1',
+        date: DateTime.now(),
+        desc: 'Caca buy from someone with low price',
+        numOfStock: 50,
+      ),
       Product(
         id: '#2021002',
         name: 'Pepsi#1',
         date: DateTime.now(),
         desc: 'Caca buy from someone with low price',
         numOfStock: 40,
-        image: 'assets/images/pepsi.png',
       ),
       Product(
         id: '#2021003',
@@ -38,7 +35,6 @@ class Product {
         date: DateTime.now(),
         desc: 'Caca buy from someone with low price',
         numOfStock: 100,
-        image: 'assets/images/samurai.png',
       ),
       Product(
         id: '#2021004',
@@ -46,8 +42,15 @@ class Product {
         date: DateTime.now(),
         desc: 'Caca buy from someone with low price',
         numOfStock: 30,
-        image: 'assets/images/oishi.png',
       ),
     ];
+  }
+
+  static int get totalStock {
+    int total = 0;
+    for (var item in prodcut) {
+      total += item.numOfStock;
+    }
+    return total;
   }
 }

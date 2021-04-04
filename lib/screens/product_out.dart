@@ -15,11 +15,10 @@ class ProductOutScreen extends HookWidget {
   CalendarController calendarController = CalendarController();
 
   int _quantity;
-  String _lifeStatus;
 
   @override
   Widget build(BuildContext context) {
-    var notifier = useProvider(productNotifier);
+    var notifier = useProvider(productNotifier('/get_products.php'));
     var choosedProduct = notifier.choosedProduct;
     _saveForm() {
       var form = _formKey.currentState;
@@ -29,9 +28,9 @@ class ProductOutScreen extends HookWidget {
         );
         if (form.validate()) {
           form.save();
-          choosedProduct.numOfStock -= _quantity;
-          choosedProduct.date = calendarController.selectedDate;
-          notifier.updateTotalQuantityOut(_quantity);
+          // choosedProduct.quantity -= _quantity;
+          choosedProduct.createDate = calendarController.selectedDate;
+          // notifier.updateTotalQuantityOut(_quantity);
           notifier.updateProduct(choosedProduct);
           notifier.choosedProduct = null;
           ScaffoldMessenger.of(context).showSnackBar(
@@ -64,7 +63,7 @@ class ProductOutScreen extends HookWidget {
           children: [
             chooseProductBtn(
               context: context,
-              choosedProduct: notifier.choosedProduct,
+              // choosedProduct: notifier.choosedProduct,
             ),
             Form(
               key: _formKey,
@@ -83,7 +82,7 @@ class ProductOutScreen extends HookWidget {
                       ),
                       currentQuantity(
                         currentQuantity: notifier.choosedProduct != null
-                            ? '${notifier.choosedProduct.numOfStock}'
+                            ? '${notifier.choosedProduct.quantity}'
                             : '',
                       ),
                     ],
@@ -303,7 +302,7 @@ class ProductOutScreen extends HookWidget {
                       Expanded(
                         child: Consumer(
                           builder: (context, watch, child) {
-                            var _notifier = watch(productNotifier);
+                            var _notifier = watch(productNotifier('/get_products.php'));
                             var listProduct = _notifier.productsList;
                             listProduct.sort((a, b) => a.id.compareTo(b.id));
                             if (listProduct == null)
@@ -314,7 +313,7 @@ class ProductOutScreen extends HookWidget {
                                 itemCount: listProduct.length,
                                 itemBuilder: (_, index) {
                                   var product = listProduct[index];
-                                  String date = formater.format(product.date);
+                                  String date = formater.format(product.createDate);
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 8.0,
@@ -327,10 +326,10 @@ class ProductOutScreen extends HookWidget {
                                       },
                                       child: MyProductListTile(
                                         date: date,
-                                        title: product.name,
+                                        name: product.name,
                                         id: product.id,
                                         subTitle: product.desc,
-                                        numOfStock: product.numOfStock,
+                                        numOfStock: product.quantity,
                                         trailingTitle: 'In Stock',
                                       ),
                                     ),
@@ -351,43 +350,43 @@ class ProductOutScreen extends HookWidget {
     );
   }
 
-  DropdownButtonFormField<String> myDropDrown({
-    List<String> items,
-    double height,
-    Widget hintText,
-    Widget icon,
-  }) {
-    return DropdownButtonFormField<String>(
-      itemHeight: height,
-      value: _lifeStatus,
-      items: items
-          .map(
-            (label) => DropdownMenuItem(
-              child: Text(
-                label.toString(),
-              ),
-              value: label,
-            ),
-          )
-          .toList(),
-      hint: hintText,
-      icon: icon,
-      onChanged: (value) {
-        _lifeStatus = value;
-      },
-      decoration: InputDecoration(
-        fillColor: Color(0xFFE1E1E1),
-        filled: true,
-        isDense: true,
-        hintStyle: TextStyle(color: Color(0xFF4B5B75)),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(4),
-          borderSide: BorderSide(
-            width: 0,
-            style: BorderStyle.none,
-          ),
-        ),
-      ),
-    );
-  }
+  // DropdownButtonFormField<String> myDropDrown({
+  //   List<String> items,
+  //   double height,
+  //   Widget hintText,
+  //   Widget icon,
+  // }) {
+  //   return DropdownButtonFormField<String>(
+  //     itemHeight: height,
+  //     value: _lifeStatus,
+  //     items: items
+  //         .map(
+  //           (label) => DropdownMenuItem(
+  //             child: Text(
+  //               label.toString(),
+  //             ),
+  //             value: label,
+  //           ),
+  //         )
+  //         .toList(),
+  //     hint: hintText,
+  //     icon: icon,
+  //     onChanged: (value) {
+  //       _lifeStatus = value;
+  //     },
+  //     decoration: InputDecoration(
+  //       fillColor: Color(0xFFE1E1E1),
+  //       filled: true,
+  //       isDense: true,
+  //       hintStyle: TextStyle(color: Color(0xFF4B5B75)),
+  //       border: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(4),
+  //         borderSide: BorderSide(
+  //           width: 0,
+  //           style: BorderStyle.none,
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 }

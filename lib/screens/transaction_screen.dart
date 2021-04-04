@@ -13,17 +13,20 @@ class SaleScreen extends StatelessWidget {
       appBar: MyAppBar(title: 'Transactions'),
       body: Consumer(
         builder: (context, watch, child) {
-          var notifier = watch(productNotifier);
+          var notifier = watch(productNotifier("/get_products.php"));
           var productList = notifier.productsList;
+          print(productList);
           if (productList == null)
             return Center(
               child: CircularProgressIndicator(),
             );
           else {
-            // int totalInStock = 0;
-            // for (var product in productList) {
-            //   totalInStock += product.numOfStock;
-            // }
+            int totalInStock = 0;
+            for (var product in productList) {
+              int quantity = int.parse(product.quantity);
+              totalInStock += quantity;
+              print('totalInstock $totalInStock');
+            }
             return Column(
               children: [
                 Container(
@@ -56,10 +59,9 @@ class SaleScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              buildMyText(text: '${notifier.totalQuantityIn}'),
+                              buildMyText(text: '$totalInStock'),
                               buildMyText(text: '${notifier.totalQuantityOut}'),
-                              buildMyText(
-                                  text: '${notifier.totalQuantityInHand}'),
+                              buildMyText(text: '$totalInStock'),
                             ],
                           ),
                         ],

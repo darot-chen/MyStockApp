@@ -3,20 +3,22 @@ import 'package:flutter/material.dart';
 class MyProductListTile extends StatelessWidget {
   const MyProductListTile({
     Key key,
-    @required this.id,
-    @required this.title,
-    @required this.date,
-    @required this.subTitle,
-    @required this.numOfStock,
-    @required this.trailingTitle,
+    this.id,
+    this.name,
+    this.category,
+    this.date,
+    this.subTitle,
+    this.numOfStock,
+    this.trailingTitle,
   }) : super(key: key);
 
   final String date;
-  final String title;
+  final String name;
+  final String category;
   final String id;
   final String subTitle;
   final String trailingTitle;
-  final int numOfStock;
+  final String numOfStock;
 
   @override
   Widget build(BuildContext context) {
@@ -39,18 +41,26 @@ class MyProductListTile extends StatelessWidget {
             ),
           ),
         ),
-        title: Text(
-          title,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+        title: Row(
+          children: [
+            Text(
+              name + ' - ',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              category,
+              style: TextStyle(backgroundColor: Colors.red[100]),
+            )
+          ],
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '$id - $date',
+              '#$id - $date',
               style: TextStyle(
                 color: Colors.white,
               ),

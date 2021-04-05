@@ -1,4 +1,3 @@
-import 'package:dropdown_formfield/dropdown_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:my_stock/components/my_app_bar.dart';
 import 'package:my_stock/components/my_dropdown.dart';
@@ -32,7 +31,6 @@ class _AddProductPageState extends State<AddProductPage> {
   TextEditingController etPrice = new TextEditingController();
   TextEditingController etDescript = new TextEditingController();
   TextEditingController etProductPhoto = new TextEditingController();
-  TextEditingController etImportDate = new TextEditingController();
 
   DateTime _date = DateTime.now();
   Future<Null> _selectDate(BuildContext context) async {
@@ -42,7 +40,7 @@ class _AddProductPageState extends State<AddProductPage> {
       firstDate: DateTime(1999),
       lastDate: DateTime(2050),
       textDirection: TextDirection.ltr,
-      initialDatePickerMode: DatePickerMode.year, 
+      initialDatePickerMode: DatePickerMode.day, 
       selectableDayPredicate: (DateTime val) =>
           val.weekday == 6 || val.weekday == 7 ? false : true,
       builder: (BuildContext context, Widget child) {
@@ -418,17 +416,11 @@ class _AddProductPageState extends State<AddProductPage> {
           ),
           Container(
             child: TextFormField(
-              controller: etImportDate,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter date';
-                }
-                return null;
-              },
               autocorrect: true,
               decoration: InputDecoration(
                 fillColor: Color(0xFFE1E1E1),
                 filled: true,
+                hintText: _date.toString(),
                 hintStyle: TextStyle(color: Color(0xFF000000)),
                 prefixIcon: IconButton(
                     icon: Icon(
@@ -491,7 +483,7 @@ class _AddProductPageState extends State<AddProductPage> {
     String nPrice = etPrice.text;
     String nDescript = etDescript.text;
     String nProductPhoto = etProductPhoto.text;
-    String nImportDtae = etImportDate.text;
+    String nImportDtae = _date.toString();
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ProductDetailPage(

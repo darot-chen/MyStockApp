@@ -4,7 +4,6 @@ class MyProductListTile extends StatelessWidget {
   const MyProductListTile({
     Key key,
     @required this.id,
-    @required this.image,
     @required this.title,
     @required this.date,
     @required this.subTitle,
@@ -12,7 +11,6 @@ class MyProductListTile extends StatelessWidget {
     @required this.trailingTitle,
   }) : super(key: key);
 
-  final String image;
   final String date;
   final String title;
   final String id;
@@ -34,10 +32,10 @@ class MyProductListTile extends StatelessWidget {
           height: 54,
           width: 54,
           decoration: BoxDecoration(
-            color: Colors.red,
+            color: Colors.grey[200],
             borderRadius: BorderRadius.circular(10),
             image: DecorationImage(
-              image: AssetImage(image),
+              image: AssetImage('assets/images/box.png'),
             ),
           ),
         ),

@@ -1,53 +1,25 @@
 // To parse this JSON data, do
 //
-//     final productOutModel = productOutModelFromMap(jsonString);
+//     final productModel = productModelFromMap(jsonString);
 
 import 'dart:convert';
 
-ProductOutModel productOutModelFromMap(String str) => ProductOutModel.fromMap(json.decode(str));
+ProductModel productModelFromMap(String str) => ProductModel.fromMap(json.decode(str));
 
-String productOutModelToMap(ProductOutModel data) => json.encode(data.toMap());
+String productModelToMap(ProductModel data) => json.encode(data.toMap());
 
-class ProductOutModel {
-    ProductOutModel({
-        this.productsOut,
-    });
-
-    List<ProductsOut> productsOut;
-
-    factory ProductOutModel.fromMap(Map<String, dynamic> json) => ProductOutModel(
-        productsOut: List<ProductsOut>.from(json["products_out"].map((x) => ProductsOut.fromMap(x))),
-    );
-
-    Map<String, dynamic> toMap() => {
-        "products_out": List<dynamic>.from(productsOut.map((x) => x.toMap())),
-    };
-}
-
-class ProductsOut {
-    ProductsOut({
-        this.id,
-        this.date,
-        this.quantityOut,
+class ProductModel {
+    ProductModel({
         this.products,
     });
 
-    String id;
-    DateTime date;
-    String quantityOut;
     List<Product> products;
 
-    factory ProductsOut.fromMap(Map<String, dynamic> json) => ProductsOut(
-        id: json["id"],
-        date: DateTime.parse(json["date"]),
-        quantityOut: json["quantity_out"],
+    factory ProductModel.fromMap(Map<String, dynamic> json) => ProductModel(
         products: List<Product>.from(json["products"].map((x) => Product.fromMap(x))),
     );
 
     Map<String, dynamic> toMap() => {
-        "id": id,
-        "date": date.toIso8601String(),
-        "quantity_out": quantityOut,
         "products": List<dynamic>.from(products.map((x) => x.toMap())),
     };
 }

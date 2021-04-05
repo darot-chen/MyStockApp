@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: textColor,
       ),
+      // home: TestApiScreen(),
       home: NavigationTabBar(),
     );
   }

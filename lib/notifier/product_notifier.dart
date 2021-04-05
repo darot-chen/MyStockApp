@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:my_stock/models/product_model.dart';
+import 'package:my_stock/models/product_models.dart';
+import 'package:my_stock/network/http_service.dart';
 
 class ProductNotifier extends ChangeNotifier {
   bool loading = false;
@@ -11,16 +13,34 @@ class ProductNotifier extends ChangeNotifier {
   int totalQuantityOut = 0;
   int totalQuantityInHand = 0;
 
-  load() async {
-    setLoading(true);
-    await Future.delayed(Duration(seconds: 3)).then((value) {
-      this.productsList = Product.prodcut;
-      for (var product in this.productsList) {
-        updateTotalQuantityIn(product.numOfStock);
-        // totalQuantityInHand += product.numOfStock;
-      }
+  ProductModel productModel;
+  HttpService http = HttpService();
+
+  Future load(String endPoint) async {
+    Response response;
+    try {
+      setLoading(true);
+
+      response = await http.getRequest(endpoint: endPoint);
+
       setLoading(false);
-    });
+
+      if (response.statusCode == 200) {
+        productModel = ProductModel.fromMap(response.data);
+        productsList = productModel.products;
+      } else {
+        print("There is some problem status code not 200");
+      }
+    } on Exception catch (e) {
+      setLoading(false);
+      print(e);
+    }
+  }
+
+  setProductList(List<Product> products) {
+    this.productsList = products;
+    print(this.productsList);
+    notifyListeners();
   }
 
   chooseProduct(Product product) {
@@ -45,22 +65,23 @@ class ProductNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  updateTotalQuantityIn(int quantity) {
-    this.totalQuantityIn += quantity;
-    this.totalQuantityInHand += quantity;
-    notifyListeners();
-  }
+  // updateTotalQuantityIn(int quantity) {
+  //   this.totalQuantityIn += quantity;
+  //   this.totalQuantityInHand += quantity;
+  //   notifyListeners();
+  // }
 
-  updateTotalQuantityOut(int quantity) {
-    this.totalQuantityInHand -= quantity;
-    this.totalQuantityOut += quantity;
-    notifyListeners();
-  }
+  // updateTotalQuantityOut(int quantity) {
+  //   this.totalQuantityInHand -= quantity;
+  //   this.totalQuantityOut += quantity;
+  //   notifyListeners();
+  // }
 }
 
-final productNotifier = ChangeNotifierProvider<ProductNotifier>(
-  (ref) {
-    var notifier = ProductNotifier()..load();
+final productNotifier = ChangeNotifierProvider.family<ProductNotifier, String>(
+  (ref, endpoint) {
+    var notifier = ProductNotifier();
+    notifier.load(endpoint);
     return notifier;
   },
 );

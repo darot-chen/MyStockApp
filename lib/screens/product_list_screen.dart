@@ -1,32 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:my_stock/components/build_action_btn.dart';
 import 'package:my_stock/components/my_app_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:my_stock/components/product_list_tile.dart';
 import 'package:my_stock/components/show_bottom_sheet.dart';
-import 'package:my_stock/models/product_model.dart';
+import 'package:my_stock/models/product_models.dart';
 import 'package:my_stock/notifier/product_notifier.dart';
 
-class ProductListScreen extends StatelessWidget {
+class ProductListScreen extends HookWidget {
   final String title;
+  final String id;
 
-  const ProductListScreen({
+  ProductListScreen({
     Key key,
     this.title,
+    this.id,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Future<Null> _refresh() async {
-      await Future.delayed(Duration(seconds: 3)).then(
-        (value) {
-          ProductNotifier().load();
-          print('refresh');
-        },
-      );
-    }
-
+    String endPoint = id != null ?"/get_product_by_cat_id.php?catId=$id" : '/get_products.php';
+    var notifier = useProvider(productNotifier(endPoint));
+    var products = notifier.productsList;
+    
     return Scaffold(
       appBar: MyAppBar(
         title: title,
@@ -43,28 +41,21 @@ class ProductListScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: Consumer(
-        builder: (context, watch, child) {
-          final _notifier = watch(productNotifier);
-
-          final _productNotNull = _notifier.productsList != null;
-          if (_productNotNull) {
-            var listProduct = _notifier.productsList;
-            listProduct.sort((a, b) => a.id.compareTo(b.id));
-            return RefreshIndicator(
-              child: buildProductList(
-                context: context,
-                productList: listProduct,
-                isLoading: _notifier.loading,
-              ),
-              onRefresh: _refresh,
-            );
-          } else
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-        },
-      ),
+      body: notifier.loading
+          ? Center(child: CircularProgressIndicator())
+          : products != null
+              ? RefreshIndicator(
+                  onRefresh: (){
+                    return;
+                  },
+                  child: buildProductList(
+                    isLoading: notifier.loading,
+                    context: context,
+                    productList: products,
+                  ))
+              : Center(
+                  child: Text("No User Object"),
+                ),
     );
   }
 
@@ -79,15 +70,16 @@ class ProductListScreen extends StatelessWidget {
         (index) {
           var product = productList[index];
           DateFormat formater = DateFormat('dd/MMM/yyy');
-          String date = formater.format(product.date);
+          String date = formater.format(product.createDate);
           return Container(
             margin: EdgeInsets.all(5),
             child: MyProductListTile(
               date: date,
-              title: product.name,
+              name: product.name,
+              category: product.catId[0].name,
               id: product.id,
               subTitle: product.desc,
-              numOfStock: product.numOfStock,
+              numOfStock: product.quantity,
               trailingTitle: 'In Stock',
             ),
           );

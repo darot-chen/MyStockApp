@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:my_stock/components/my_app_bar.dart';
 import 'package:my_stock/components/my_dropdown.dart';
 import 'package:my_stock/components/product_list_tile.dart';
-import 'package:my_stock/models/product_model.dart';
+import 'package:my_stock/models/product_models.dart';
 import 'package:my_stock/notifier/product_notifier.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -20,7 +20,7 @@ class ProductInScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    var notifier = useProvider(productNotifier);
+    var notifier = useProvider(productNotifier('/get_products.php'));
     var choosedProduct = notifier.choosedProduct;
     _saveForm() {
       var form = _formKey.currentState;
@@ -30,9 +30,8 @@ class ProductInScreen extends HookWidget {
         );
         if (form.validate()) {
           form.save();
-          choosedProduct.numOfStock += _quantity;
-          choosedProduct.date = calendarController.selectedDate;
-          notifier.updateTotalQuantityIn(_quantity);
+          // choosedProduct.quantity += _quantity;
+          choosedProduct.createDate = calendarController.selectedDate;
           notifier.updateProduct(choosedProduct);
           notifier.choosedProduct = null;
 
@@ -85,7 +84,7 @@ class ProductInScreen extends HookWidget {
                       ),
                       currentQuantity(
                         currentQuantity: notifier.choosedProduct != null
-                            ? '${notifier.choosedProduct.numOfStock}'
+                            ? '${notifier.choosedProduct.quantity}'
                             : '',
                       ),
                     ],
@@ -330,7 +329,7 @@ class ProductInScreen extends HookWidget {
                       Expanded(
                         child: Consumer(
                           builder: (context, watch, child) {
-                            var _notifier = watch(productNotifier);
+                            var _notifier = watch(productNotifier('/get_products.php'));
                             var listProduct = _notifier.productsList;
                             listProduct.sort((a, b) => a.id.compareTo(b.id));
                             if (listProduct == null)
@@ -341,7 +340,8 @@ class ProductInScreen extends HookWidget {
                                 itemCount: listProduct.length,
                                 itemBuilder: (_, index) {
                                   var product = listProduct[index];
-                                  String date = formater.format(product.date);
+                                  String date =
+                                      formater.format(product.createDate);
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 8.0,
@@ -354,10 +354,11 @@ class ProductInScreen extends HookWidget {
                                       },
                                       child: MyProductListTile(
                                         date: date,
-                                        title: product.name,
+                                        name: product.name,
+                                        category: product.catId[0].name,
                                         id: product.id,
                                         subTitle: product.desc,
-                                        numOfStock: product.numOfStock,
+                                        numOfStock: product.quantity,
                                         trailingTitle: 'In Stock',
                                       ),
                                     ),

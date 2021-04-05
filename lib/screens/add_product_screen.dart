@@ -1,5 +1,7 @@
+import 'package:dropdown_formfield/dropdown_formfield.dart';
 import 'package:flutter/material.dart';
 import 'package:my_stock/components/my_app_bar.dart';
+import 'package:my_stock/components/my_dropdown.dart';
 import 'package:my_stock/screens/product_detail_screen.dart';
 
 class AddProductPage extends StatefulWidget {
@@ -22,14 +24,15 @@ const MaterialColor _buttonTextColor = MaterialColor(0xFFE53C49, <int, Color>{
 
 class _AddProductPageState extends State<AddProductPage> {
   var _scaffoldKey = GlobalKey<ScaffoldState>();
+  var _formKey = GlobalKey<FormState>();
+
   TextEditingController etCategory = new TextEditingController();
   TextEditingController etProductName = new TextEditingController();
   TextEditingController etStock = new TextEditingController();
-  TextEditingController etTakein = new TextEditingController();
-  TextEditingController etSoldout = new TextEditingController();
-  TextEditingController etSize = new TextEditingController();
+  TextEditingController etPrice = new TextEditingController();
   TextEditingController etDescript = new TextEditingController();
   TextEditingController etProductPhoto = new TextEditingController();
+  TextEditingController etImportDate = new TextEditingController();
 
   DateTime _date = DateTime.now();
   Future<Null> _selectDate(BuildContext context) async {
@@ -38,6 +41,10 @@ class _AddProductPageState extends State<AddProductPage> {
       initialDate: _date,
       firstDate: DateTime(1999),
       lastDate: DateTime(2050),
+      textDirection: TextDirection.ltr,
+      initialDatePickerMode: DatePickerMode.year, 
+      selectableDayPredicate: (DateTime val) =>
+          val.weekday == 6 || val.weekday == 7 ? false : true,
       builder: (BuildContext context, Widget child) {
         return Theme(
           data: ThemeData(
@@ -69,40 +76,35 @@ class _AddProductPageState extends State<AddProductPage> {
   }
 
   get _buildBody {
-    return Container(
-      padding: EdgeInsets.all(20),
-      child: ListView(
-        children: [
-          _buildCategory,
-          SizedBox(
-            height: 10,
-          ),
-          _buildProductName,
-          SizedBox(
-            height: 10,
-          ),
-          _buildQuantities,
-          SizedBox(
-            height: 10,
-          ),
-          _buildSizes,
-          SizedBox(
-            height: 10,
-          ),
-          _buildDescript,
-          SizedBox(
-            height: 10,
-          ),
-          _buildProductPhoto,
-          SizedBox(
-            height: 10,
-          ),
-          _buildImportDate,
-          SizedBox(
-            height: 20,
-          ),
-          _buildButtonAdd,
-        ],
+    return Form(
+      key: _formKey,
+      child: Container(
+        padding: EdgeInsets.all(20),
+        child: ListView(
+          children: [
+            _buildCategory,
+            SizedBox(
+              height: 10,
+            ),
+            _buildProductName,
+            SizedBox(
+              height: 10,
+            ),
+            _buildQuantities,
+            SizedBox(
+              height: 10,
+            ),
+            _buildDescript,
+            SizedBox(
+              height: 10,
+            ),
+            _buildImportDate,
+            SizedBox(
+              height: 40,
+            ),
+            _buildButtonAdd,
+          ],
+        ),
       ),
     );
   }
@@ -126,24 +128,15 @@ class _AddProductPageState extends State<AddProductPage> {
             height: 9,
           ),
           Container(
-            height: 36,
-            child: TextField(
-              controller: etCategory,
-              autocorrect: true,
-              decoration: InputDecoration(
-                fillColor: Color(0xFFE1E1E1),
-                filled: true,
-                hintText: "Drinks, Snacks, clothes .....",
-                hintStyle: TextStyle(color: Color(0xFF000000)),
-                suffixIcon: IconButton(
-                    icon: Icon(
-                      Icons.arrow_drop_down_circle_rounded,
-                      size: 24,
-                      color: Color(0xFF243859),
-                    ),
-                    onPressed: () {}),
-                border: InputBorder.none,
-              ),
+            alignment: Alignment.center,
+            child: MyDropDown(
+              height: 48,
+              items: ['Drinks', 'Snacks', 'Clothes'],
+              onChanged: (value) {
+                setState(() {});
+              },
+              hintText: Text('Category'),
+              icon: Icon(Icons.arrow_drop_down_circle),
             ),
           ),
         ],
@@ -170,16 +163,27 @@ class _AddProductPageState extends State<AddProductPage> {
             height: 9,
           ),
           Container(
-            height: 36,
-            child: TextField(
+            child: TextFormField(
               controller: etProductName,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter product name';
+                }
+                return null;
+              },
               autocorrect: true,
               decoration: InputDecoration(
                 fillColor: Color(0xFFE1E1E1),
                 filled: true,
                 hintText: "",
                 hintStyle: TextStyle(color: Color(0xFF000000)),
-                border: InputBorder.none,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(4),
+                  borderSide: BorderSide(
+                    width: 0,
+                    style: BorderStyle.none,
+                  ),
+                ),
               ),
             ),
           ),
@@ -218,17 +222,28 @@ class _AddProductPageState extends State<AddProductPage> {
             height: 9,
           ),
           Container(
-            height: 36,
             width: 170,
-            child: TextField(
+            child: TextFormField(
               controller: etStock,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter stock';
+                }
+                return null;
+              },
               autocorrect: true,
               decoration: InputDecoration(
                 fillColor: Color(0xFFE1E1E1),
                 filled: true,
                 hintText: "",
                 hintStyle: TextStyle(color: Color(0xFF000000)),
-                border: InputBorder.none,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(4),
+                  borderSide: BorderSide(
+                    width: 0,
+                    style: BorderStyle.none,
+                  ),
+                ),
               ),
             ),
           ),
@@ -256,142 +271,28 @@ class _AddProductPageState extends State<AddProductPage> {
             height: 9,
           ),
           Container(
-            child: Row(
-              children: [
-                Container(
-                  height: 36,
-                  width: 80,
-                  child: TextField(
-                    controller: etTakein,
-                    autocorrect: true,
-                    decoration: InputDecoration(
-                      fillColor: Color(0xFFE1E1E1),
-                      filled: true,
-                      hintText: "Take in",
-                      hintStyle: TextStyle(color: Color(0xFF000000)),
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Container(
-                  height: 36,
-                  width: 80,
-                  child: TextField(
-                    controller: etSoldout,
-                    autocorrect: true,
-                    decoration: InputDecoration(
-                      fillColor: Color(0xFFE1E1E1),
-                      filled: true,
-                      hintText: "Sold out",
-                      hintStyle: TextStyle(color: Color(0xFF000000)),
-                      border: InputBorder.none,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  get _buildSizes {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildSize,
-          _buildLiftStatus,
-        ],
-      ),
-    );
-  }
-
-  get _buildSize {
-    return Container(
-      child: Column(
-        children: [
-          Container(
-            alignment: Alignment.topLeft,
-            child: Text(
-              'Size',
-              style: TextStyle(
-                color: Color(0xFF243859),
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 9,
-          ),
-          Container(
-            height: 36,
             width: 170,
-            child: TextField(
-              controller: etSize,
+            child: TextFormField(
+              controller: etPrice,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter price';
+                }
+                return null;
+              },
               autocorrect: true,
               decoration: InputDecoration(
                 fillColor: Color(0xFFE1E1E1),
                 filled: true,
-                hintText: "None",
+                hintText: "",
                 hintStyle: TextStyle(color: Color(0xFF000000)),
-                suffixIcon: IconButton(
-                    icon: Icon(
-                      Icons.arrow_drop_down_circle_rounded,
-                      size: 24,
-                      color: Color(0xFF243859),
-                    ),
-                    onPressed: () {}),
-                border: InputBorder.none,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  get _buildLiftStatus {
-    return Container(
-      child: Column(
-        children: [
-          Container(
-            alignment: Alignment.topLeft,
-            child: Text(
-              'Lift Status',
-              style: TextStyle(
-                color: Color(0xFF243859),
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 9,
-          ),
-          Container(
-            height: 36,
-            width: 170,
-            child: TextField(
-              autocorrect: true,
-              decoration: InputDecoration(
-                fillColor: Color(0xFFE1E1E1),
-                filled: true,
-                hintText: "None",
-                hintStyle: TextStyle(color: Color(0xFF000000)),
-                suffixIcon: IconButton(
-                    icon: Icon(
-                      Icons.arrow_drop_down_circle_rounded,
-                      size: 24,
-                      color: Color(0xFF243859),
-                    ),
-                    onPressed: () {}),
-                border: InputBorder.none,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(4),
+                  borderSide: BorderSide(
+                    width: 0,
+                    style: BorderStyle.none,
+                  ),
+                ),
               ),
             ),
           ),
@@ -419,15 +320,27 @@ class _AddProductPageState extends State<AddProductPage> {
             height: 9,
           ),
           Container(
-            child: TextField(
+            child: TextFormField(
               controller: etDescript,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter descript';
+                }
+                return null;
+              },
               autocorrect: true,
               decoration: InputDecoration(
                 fillColor: Color(0xFFE1E1E1),
                 filled: true,
                 hintText: "",
                 hintStyle: TextStyle(color: Color(0xFF000000)),
-                border: InputBorder.none,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(4),
+                  borderSide: BorderSide(
+                    width: 0,
+                    style: BorderStyle.none,
+                  ),
+                ),
               ),
             ),
           ),
@@ -436,48 +349,54 @@ class _AddProductPageState extends State<AddProductPage> {
     );
   }
 
-  get _buildProductPhoto {
-    return Container(
-      child: Column(
-        children: [
-          Container(
-            alignment: Alignment.topLeft,
-            child: Text(
-              'Product Photo',
-              style: TextStyle(
-                color: Color(0xFF243859),
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 9,
-          ),
-          Container(
-            child: TextField(
-              controller: etProductPhoto,
-              autocorrect: true,
-              decoration: InputDecoration(
-                fillColor: Color(0xFFE1E1E1),
-                filled: true,
-                hintText: "",
-                hintStyle: TextStyle(color: Color(0xFF000000)),
-                prefixIcon: IconButton(
-                    icon: Icon(
-                      Icons.add_a_photo_rounded,
-                      size: 25,
-                      color: Color(0xFF243859),
-                    ),
-                    onPressed: () {}),
-                border: InputBorder.none,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // get _buildProductPhoto {
+  //   return Container(
+  //     child: Column(
+  //       children: [
+  //         Container(
+  //           alignment: Alignment.topLeft,
+  //           child: Text(
+  //             'Product Photo',
+  //             style: TextStyle(
+  //               color: Color(0xFF243859),
+  //               fontSize: 18,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
+  //         ),
+  //         SizedBox(
+  //           height: 9,
+  //         ),
+  //         Container(
+  //           child: TextFormField(
+  //             controller: etProductPhoto,
+  //             validator: (value) {
+  //               if (value == null || value.isEmpty) {
+  //                 return 'Please enter some text';
+  //               }
+  //               return null;
+  //             },
+  //             autocorrect: true,
+  //             decoration: InputDecoration(
+  //               fillColor: Color(0xFFE1E1E1),
+  //               filled: true,
+  //               hintText: "",
+  //               hintStyle: TextStyle(color: Color(0xFF000000)),
+  //               prefixIcon: IconButton(
+  //                   icon: Icon(
+  //                     Icons.add_a_photo_rounded,
+  //                     size: 25,
+  //                     color: Color(0xFF243859),
+  //                   ),
+  //                   onPressed: () {}),
+  //               border: InputBorder.none,
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   get _buildImportDate {
     return Container(
@@ -498,12 +417,18 @@ class _AddProductPageState extends State<AddProductPage> {
             height: 9,
           ),
           Container(
-            child: TextField(
+            child: TextFormField(
+              controller: etImportDate,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter date';
+                }
+                return null;
+              },
               autocorrect: true,
               decoration: InputDecoration(
                 fillColor: Color(0xFFE1E1E1),
                 filled: true,
-                hintText: "",
                 hintStyle: TextStyle(color: Color(0xFF000000)),
                 prefixIcon: IconButton(
                     icon: Icon(
@@ -516,8 +441,19 @@ class _AddProductPageState extends State<AddProductPage> {
                         _selectDate(context);
                       });
                     }),
-                border: InputBorder.none,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(4),
+                  borderSide: BorderSide(
+                    width: 0,
+                    style: BorderStyle.none,
+                  ),
+                ),
               ),
+              onTap: () {
+                setState(() {
+                  _selectDate(context);
+                });
+              },
             ),
           ),
         ],
@@ -534,7 +470,7 @@ class _AddProductPageState extends State<AddProductPage> {
       ),
       child: TextButton(
         onPressed: () {
-          _sendText(context);
+          if (_formKey.currentState.validate()) _sendText(context);
         },
         child: Text(
           "Add Product",
@@ -552,22 +488,20 @@ class _AddProductPageState extends State<AddProductPage> {
     String nCategory = etCategory.text;
     String nProductName = etProductName.text;
     String nStock = etStock.text;
-    String nTakein = etTakein.text;
-    String nSoldout = etSoldout.text;
-    String nSize = etSize.text;
+    String nPrice = etPrice.text;
     String nDescript = etDescript.text;
     String nProductPhoto = etProductPhoto.text;
+    String nImportDtae = etImportDate.text;
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ProductDetailPage(
           nCategoryText: nCategory,
           nProductNameText: nProductName,
           nStockText: nStock,
-          nTakeinText: nTakein,
-          nSoldOutText: nSoldout,
-          nSizeText: nSize,
+          nPriceText: nPrice,
           nDescriptText: nDescript,
           nProductPhotoText: nProductPhoto,
+          nImportDateText: nImportDtae,
         ),
       ),
     );

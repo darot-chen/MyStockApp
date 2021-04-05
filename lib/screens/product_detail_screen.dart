@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:my_stock/components/my_app_bar.dart';
 
-
 class ProductDetailPage extends StatelessWidget {
   final String nCategoryText;
   final String nProductNameText;
   final String nStockText;
-  final String nTakeinText;
-  final String nSoldOutText;
-  final String nSizeText;
+  final String nPriceText;
   final String nDescriptText;
   final String nProductPhotoText;
+  final String nImportDateText;
   ProductDetailPage(
       {Key key,
       @required this.nStockText,
-      @required this.nSizeText,
       this.nCategoryText,
       this.nProductNameText,
-      this.nTakeinText,
-      this.nSoldOutText,
       this.nDescriptText,
-      this.nProductPhotoText})
+      this.nProductPhotoText,
+      this.nImportDateText,
+      this.nPriceText})
       : super(key: key);
 
   @override
@@ -44,91 +41,27 @@ class ProductDetailPage extends StatelessWidget {
       padding: EdgeInsets.all(20),
       child: Column(
         children: [
-          _buildImagesProduct,
-          SizedBox(
-            height: 30,
-          ),
           _buildDescription,
           SizedBox(
             height: 20,
           ),
-          _buildStocks,
+          _buildStock,
           SizedBox(
             height: 10,
           ),
-          _buildSizes,
+          _buildPrice,
           SizedBox(
             height: 10,
           ),
-          _buildSale,
+          _buildImportDate,
           SizedBox(
-            height: 20,
+            height: 40,
           ),
           _buildAddMoreStock,
           SizedBox(
             height: 20,
           ),
           _buildEditinfo,
-        ],
-      ),
-    );
-  }
-
-  get _buildImagesProduct {
-    return Container(
-      padding: EdgeInsets.only(top: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildImageDetail,
-          _buildImages,
-        ],
-      ),
-    );
-  }
-
-  get _buildImageDetail {
-    return Container(
-      child: Column(
-        children: [
-          Image.asset('assets/images/coca.png',
-            cacheWidth: 290,
-            cacheHeight: 211,
-          ),
-        ],
-      ),
-    );
-  }
-
-  get _buildImages {
-    return Container(
-      alignment: Alignment.topRight,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildImage,
-          SizedBox(
-            height: 10,
-          ),
-          _buildImage,
-          SizedBox(
-            height: 10,
-          ),
-          _buildImage,
-        ],
-      ),
-    );
-  }
-
-  get _buildImage {
-    return Container(
-      child: Column(
-        children: [
-          Image.asset(
-            'assets/images/coca.png',
-            cacheWidth: 50,
-            cacheHeight: 50,
-          ),
         ],
       ),
     );
@@ -161,22 +94,9 @@ class ProductDetailPage extends StatelessWidget {
     );
   }
 
-  get _buildStocks {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildStock,
-          _buildLifestatus,
-        ],
-      ),
-    );
-  }
-
   get _buildStock {
     return Container(
-      width: 160,
-      height: 30,
+      height: 50,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         border: Border.all(color: Color(0xFFE53C49)),
@@ -195,66 +115,9 @@ class ProductDetailPage extends StatelessWidget {
     );
   }
 
-  get _buildLifestatus {
-    return Container(
-      width: 160,
-      height: 30,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        border: Border.all(color: Color(0xFFE53C49)),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Container(
-        padding: EdgeInsets.only(left: 10, right: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("Life status"),
-            Text("01/04/21"),
-          ],
-        ),
-      ),
-    );
-  }
-
-  get _buildSizes {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildSize,
-          _buildPrice,
-        ],
-      ),
-    );
-  }
-
-  get _buildSize {
-    return Container(
-      width: 160,
-      height: 30,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        border: Border.all(color: Color(0xFFE53C49)),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Container(
-        padding: EdgeInsets.only(left: 10, right: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("Size"),
-            Text(nSizeText),
-          ],
-        ),
-      ),
-    );
-  }
-
   get _buildPrice {
     return Container(
-      width: 160,
-      height: 30,
+      height: 50,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         border: Border.all(color: Color(0xFFE53C49)),
@@ -266,17 +129,16 @@ class ProductDetailPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text("Price"),
-            Text(nTakeinText),
+            Text(nPriceText),
           ],
         ),
       ),
     );
   }
 
-  get _buildSale {
+  get _buildImportDate {
     return Container(
-      width: 360,
-      height: 30,
+      height: 50,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         border: Border.all(color: Color(0xFFE53C49)),
@@ -287,8 +149,8 @@ class ProductDetailPage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Sale"),
-            Text(nSoldOutText),
+            Text("Date"),
+            Text(nImportDateText),
           ],
         ),
       ),
@@ -297,11 +159,10 @@ class ProductDetailPage extends StatelessWidget {
 
   get _buildAddMoreStock {
     return Container(
-      height: 40,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: Color(0xFFE53C49),
-        borderRadius: BorderRadius.circular(17),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: TextButton(
         onPressed: () {},
@@ -319,11 +180,10 @@ class ProductDetailPage extends StatelessWidget {
 
   get _buildEditinfo {
     return Container(
-      height: 40,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         border: Border.all(color: Color(0xFFE53C49)),
-        borderRadius: BorderRadius.circular(17),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: TextButton(
         onPressed: () {},

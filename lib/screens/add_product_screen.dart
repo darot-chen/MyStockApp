@@ -30,7 +30,7 @@ class _AddProductPageState extends State<AddProductPage> {
   TextEditingController etStock = new TextEditingController();
   TextEditingController etPrice = new TextEditingController();
   TextEditingController etDescript = new TextEditingController();
-  TextEditingController etProductPhoto = new TextEditingController();
+
 
   DateTime _date = DateTime.now();
   Future<Null> _selectDate(BuildContext context) async {
@@ -40,7 +40,7 @@ class _AddProductPageState extends State<AddProductPage> {
       firstDate: DateTime(1999),
       lastDate: DateTime(2050),
       textDirection: TextDirection.ltr,
-      initialDatePickerMode: DatePickerMode.day, 
+      initialDatePickerMode: DatePickerMode.day,
       selectableDayPredicate: (DateTime val) =>
           val.weekday == 6 || val.weekday == 7 ? false : true,
       builder: (BuildContext context, Widget child) {
@@ -462,7 +462,10 @@ class _AddProductPageState extends State<AddProductPage> {
       ),
       child: TextButton(
         onPressed: () {
-          if (_formKey.currentState.validate()) _sendText(context);
+          if (_formKey.currentState.validate()) {
+            _sendText(context);
+            _clear(context);
+          }
         },
         child: Text(
           "Add Product",
@@ -476,13 +479,20 @@ class _AddProductPageState extends State<AddProductPage> {
     );
   }
 
+  void _clear(BuildContext context) {
+    etCategory.clear();
+    etProductName.clear();
+    etStock.clear();
+    etPrice.clear();
+    etDescript.clear();
+  }
+
   void _sendText(BuildContext context) {
     String nCategory = etCategory.text;
     String nProductName = etProductName.text;
     String nStock = etStock.text;
     String nPrice = etPrice.text;
     String nDescript = etDescript.text;
-    String nProductPhoto = etProductPhoto.text;
     String nImportDtae = _date.toString();
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -492,7 +502,6 @@ class _AddProductPageState extends State<AddProductPage> {
           nStockText: nStock,
           nPriceText: nPrice,
           nDescriptText: nDescript,
-          nProductPhotoText: nProductPhoto,
           nImportDateText: nImportDtae,
         ),
       ),

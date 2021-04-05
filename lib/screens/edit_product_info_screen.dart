@@ -4,9 +4,22 @@ import 'package:my_stock/components/my_app_bar.dart';
 import 'package:my_stock/components/my_dropdown.dart';
 import 'package:my_stock/screens/product_detail_screen.dart';
 
-class AddProductPage extends StatefulWidget {
+class EditProductInfo extends StatefulWidget {
+  final String name;
+  final String numOfStock;
+  final String price;
+  final String desc;
+  final String date;
+  EditProductInfo(
+      {Key key,
+      @required this.name,
+      this.numOfStock,
+      this.price,
+      this.desc,
+      this.date})
+      : super(key: key);
   @override
-  _AddProductPageState createState() => _AddProductPageState();
+  _EditProductInfoState createState() => _EditProductInfoState();
 }
 
 const MaterialColor _buttonTextColor = MaterialColor(0xFFE53C49, <int, Color>{
@@ -22,7 +35,7 @@ const MaterialColor _buttonTextColor = MaterialColor(0xFFE53C49, <int, Color>{
   900: Color(0xFFE53C49),
 });
 
-class _AddProductPageState extends State<AddProductPage> {
+class _EditProductInfoState extends State<EditProductInfo> {
   var _scaffoldKey = GlobalKey<ScaffoldState>();
   var _formKey = GlobalKey<FormState>();
 
@@ -68,7 +81,7 @@ class _AddProductPageState extends State<AddProductPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: MyAppBar(title: 'New Product'),
+      appBar: MyAppBar(title: 'Edit Product'),
       body: _buildBody,
     );
   }
@@ -163,17 +176,11 @@ class _AddProductPageState extends State<AddProductPage> {
           Container(
             child: TextFormField(
               controller: etProductName,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter product name';
-                }
-                return null;
-              },
               autocorrect: true,
               decoration: InputDecoration(
                 fillColor: Color(0xFFE1E1E1),
                 filled: true,
-                hintText: "",
+                hintText: widget.name,
                 hintStyle: TextStyle(color: Color(0xFF4B5B75)),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4),
@@ -223,17 +230,11 @@ class _AddProductPageState extends State<AddProductPage> {
             width: 170,
             child: TextFormField(
               controller: etStock,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter stock';
-                }
-                return null;
-              },
               autocorrect: true,
               decoration: InputDecoration(
                 fillColor: Color(0xFFE1E1E1),
                 filled: true,
-                hintText: "",
+                hintText: widget.numOfStock,
                 hintStyle: TextStyle(color: Color(0xFF4B5B75)),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4),
@@ -272,17 +273,11 @@ class _AddProductPageState extends State<AddProductPage> {
             width: 170,
             child: TextFormField(
               controller: etPrice,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter price';
-                }
-                return null;
-              },
               autocorrect: true,
               decoration: InputDecoration(
                 fillColor: Color(0xFFE1E1E1),
                 filled: true,
-                hintText: "",
+                hintText: widget.price,
                 hintStyle: TextStyle(color: Color(0xFF4B5B75)),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4),
@@ -320,17 +315,11 @@ class _AddProductPageState extends State<AddProductPage> {
           Container(
             child: TextFormField(
               controller: etDescript,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter descript';
-                }
-                return null;
-              },
               autocorrect: true,
               decoration: InputDecoration(
                 fillColor: Color(0xFFE1E1E1),
                 filled: true,
-                hintText: "",
+                hintText: widget.desc,
                 hintStyle: TextStyle(color: Color(0xFF4B5B75)),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(4),
@@ -346,55 +335,6 @@ class _AddProductPageState extends State<AddProductPage> {
       ),
     );
   }
-
-  // get _buildProductPhoto {
-  //   return Container(
-  //     child: Column(
-  //       children: [
-  //         Container(
-  //           alignment: Alignment.topLeft,
-  //           child: Text(
-  //             'Product Photo',
-  //             style: TextStyle(
-  //               color: Color(0xFF243859),
-  //               fontSize: 18,
-  //               fontWeight: FontWeight.bold,
-  //             ),
-  //           ),
-  //         ),
-  //         SizedBox(
-  //           height: 9,
-  //         ),
-  //         Container(
-  //           child: TextFormField(
-  //             controller: etProductPhoto,
-  //             validator: (value) {
-  //               if (value == null || value.isEmpty) {
-  //                 return 'Please enter some text';
-  //               }
-  //               return null;
-  //             },
-  //             autocorrect: true,
-  //             decoration: InputDecoration(
-  //               fillColor: Color(0xFFE1E1E1),
-  //               filled: true,
-  //               hintText: "",
-  //               hintStyle: TextStyle(color: Color(0xFF000000)),
-  //               prefixIcon: IconButton(
-  //                   icon: Icon(
-  //                     Icons.add_a_photo_rounded,
-  //                     size: 25,
-  //                     color: Color(0xFF243859),
-  //                   ),
-  //                   onPressed: () {}),
-  //               border: InputBorder.none,
-  //             ),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   get _buildImportDate {
     return Container(
@@ -420,7 +360,7 @@ class _AddProductPageState extends State<AddProductPage> {
               decoration: InputDecoration(
                 fillColor: Color(0xFFE1E1E1),
                 filled: true,
-                hintText: _date.toString(),
+                hintText: widget.date,
                 hintStyle: TextStyle(color: Color(0xFF4B5B75)),
                 prefixIcon: IconButton(
                     icon: Icon(
@@ -468,7 +408,7 @@ class _AddProductPageState extends State<AddProductPage> {
           }
         },
         child: Text(
-          "Add Product",
+          "Save Product",
           style: TextStyle(
             color: Color(0xFFFFFFFF),
             fontSize: 18,
@@ -492,7 +432,7 @@ class _AddProductPageState extends State<AddProductPage> {
     String date = formater.format(DateTime.now());
     String nProductName = etProductName.text;
     String nStock = etStock.text;
-    String nPrice = etPrice.text;
+    String nPrice = etPrice.text; 
     String nDescript = etDescript.text;
     String nImportDate = date;
     Navigator.of(context).push(
@@ -502,7 +442,7 @@ class _AddProductPageState extends State<AddProductPage> {
           desc: nDescript,
           numOfStock: nStock,
           price: nPrice,
-          date: nImportDate,
+          date: nImportDate, 
         ),
       ),
     );

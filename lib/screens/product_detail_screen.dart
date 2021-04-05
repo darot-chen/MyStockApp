@@ -1,30 +1,33 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:my_stock/components/my_app_bar.dart';
+import 'package:my_stock/screens/edit_product_info_screen.dart';
 
-class ProductDetailPage extends StatelessWidget {
-  final String nCategoryText;
-  final String nProductNameText;
-  final String nStockText;
-  final String nPriceText;
-  final String nDescriptText;
-  final String nProductPhotoText;
-  final String nImportDateText;
+class ProductDetailPage extends StatefulWidget {
+  final String name;
+  final String numOfStock;
+  final String price;
+  final String desc;
+  final String date;
   ProductDetailPage(
       {Key key,
-      @required this.nStockText,
-      this.nCategoryText,
-      this.nProductNameText,
-      this.nDescriptText,
-      this.nProductPhotoText,
-      this.nImportDateText,
-      this.nPriceText})
+      @required this.name,
+      this.numOfStock,
+      this.price,
+      this.desc,
+      this.date})
       : super(key: key);
 
+  @override
+  _ProductDetailPageState createState() => _ProductDetailPageState();
+}
+
+class _ProductDetailPageState extends State<ProductDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(
-        title: nProductNameText,
+        title: widget.name,
         action: [
           IconButton(
             icon: Icon(Icons.delete_rounded),
@@ -85,8 +88,11 @@ class ProductDetailPage extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(10),
             child: Text(
-              nDescriptText,
-              style: TextStyle(fontSize: 12),
+              widget.desc,
+              style: TextStyle(
+                color: Color(0xFF4B5B75),
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
@@ -107,8 +113,21 @@ class ProductDetailPage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Stock"),
-            Text(nStockText),
+            Text(
+              "Stock",
+              style: TextStyle(
+                color: Color(0xFF243859),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              widget.numOfStock,
+              style: TextStyle(
+                color: Color(0xFF4B5B75),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
       ),
@@ -128,8 +147,21 @@ class ProductDetailPage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Price"),
-            Text(nPriceText),
+            Text(
+              "Price",
+              style: TextStyle(
+                color: Color(0xFF243859),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              widget.price,
+              style: TextStyle(
+                color: Color(0xFF4B5B75),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
       ),
@@ -149,8 +181,21 @@ class ProductDetailPage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Date"),
-            Text(nImportDateText),
+            Text(
+              "Date",
+              style: TextStyle(
+                color: Color(0xFF243859),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              widget.date,
+              style: TextStyle(
+                color: Color(0xFF4B5B75),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
       ),
@@ -186,7 +231,20 @@ class ProductDetailPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
       ),
       child: TextButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => EditProductInfo(
+                name: widget.name,
+                desc: widget.desc,
+                numOfStock: widget.numOfStock,
+                price: widget.price,
+                date: widget.date,
+
+              ),
+            ),
+          );
+        },
         child: Text(
           "Edit information",
           style: TextStyle(

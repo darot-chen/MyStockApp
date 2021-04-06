@@ -15,7 +15,6 @@ class SaleScreen extends StatelessWidget {
         builder: (context, watch, child) {
           var notifier = watch(productNotifier("/get_products.php"));
           var productList = notifier.productsList;
-          print(productList);
           if (productList == null)
             return Center(
               child: CircularProgressIndicator(),
@@ -25,7 +24,6 @@ class SaleScreen extends StatelessWidget {
             for (var product in productList) {
               int quantity = int.parse(product.quantity);
               totalInStock += quantity;
-              print('totalInstock $totalInStock');
             }
             return Column(
               children: [

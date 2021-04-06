@@ -1,240 +1,298 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:my_stock/components/my_app_bar.dart';
+import 'package:my_stock/models/product_models.dart';
+import 'package:my_stock/notifier/product_notifier.dart';
+import 'package:my_stock/screens/product_in_screen.dart';
 
-class ProductDetailPage extends StatelessWidget {
-  final String name;
-  final String numOfStock;
-  final String price;
-  final String desc;
-  final String date;
-  ProductDetailPage(
-      {Key key,
-      @required this.name,
-      this.numOfStock,
-      this.price,
-      this.desc,
-      this.date})
-      : super(key: key);
+import 'add_product.dart';
+
+class ProductDetailPage extends HookWidget {
+  final Product product;
+  ProductDetailPage({
+    Key key,
+    this.product,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var notifier = useProvider(getProductNotifier);
     return Scaffold(
       appBar: MyAppBar(
-        title: name,
+        title: product.name ?? 'Title',
         action: [
           IconButton(
             icon: Icon(Icons.delete_rounded),
-            onPressed: () {},
+            onPressed: () {
+              notifier.createProduct(
+                endPoint: '/delete_product.php?',
+                id: product.id,
+              );
+              // onRefresh('/get_products.php');
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Product Delete Succefully'),
+                ),
+              );
+              Navigator.pop(context);
+            },
           ),
         ],
       ),
-      body: _buildBody,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            GridView(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.all(15),
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200,
+                mainAxisSpacing: 15,
+                crossAxisSpacing: 15,
+                childAspectRatio: 100 / 100,
+              ),
+              children: [
+                buildMyCard(
+                  title: "#ID",
+                  value: product.id,
+                ),
+                buildMyDateCard(),
+                buildMyCard(
+                  title: "Quantity",
+                  value: product.quantity,
+                ),
+                buildMyCard(
+                  title: "Price",
+                  value: '${product.sellPrice}\$',
+                ),
+              ],
+            ),
+            buildMyDivider(),
+            SizedBox(height: 15),
+            buildDescription(),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        alignment: Alignment.topCenter,
+        height: 100,
+        color: Colors.red[200],
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Expanded(
+              child: buildMyBtn(
+                color: Color(0xFF243859),
+                textColor: Colors.white,
+                title: 'Edit',
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddProduct(
+                        product: product,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Expanded(
+              child: Consumer(builder: (context, watch, child) {
+                var notifier = watch(productNotifier('/get_products.php'));
+                return buildMyBtn(
+                  color: Colors.white,
+                  title: 'Add Quantity',
+                  onTap: () {
+                    notifier.chooseProduct(product);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProductInScreen(),
+                      ),
+                    );
+                  },
+                );
+              }),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  get _buildBody {
+  TextButton buildMyBtn({
+    Color color,
+    Color textColor,
+    String title,
+    Function onTap,
+  }) {
+    return TextButton(
+      onPressed: onTap,
+      child: Container(
+        height: 48,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4),
+          color: color,
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            color: textColor ?? Color(0xFF243859),
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Row buildMyDivider() {
+    return Row(
+      children: [
+        Expanded(
+            child: Divider(
+          thickness: 1.5,
+          color: Color(0xFF4B5B75),
+          endIndent: 15,
+        )),
+        Text(
+          "Description",
+          style: TextStyle(
+            color: Color(0xFF243859),
+            fontSize: 18,
+          ),
+        ),
+        Expanded(
+            child: Divider(
+          thickness: 1.5,
+          color: Color(0xFF4B5B75),
+          indent: 15,
+        )),
+      ],
+    );
+  }
+
+  Container buildMyDateCard() {
     return Container(
-      padding: EdgeInsets.all(20),
+      alignment: Alignment.center,
+      padding: EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: Colors.red.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          _buildDescription,
-          SizedBox(
-            height: 20,
+          SizedBox(height: 15),
+          Text(
+            "Create At",
+            style: TextStyle(
+              color: Color(0xFF243859),
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          _buildStock,
-          SizedBox(
-            height: 10,
+          SizedBox(height: 15),
+          Text(
+            DateFormat('dd').format(product.createDate),
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 64,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          _buildPrice,
-          SizedBox(
-            height: 10,
+          Text(
+            DateFormat('MMM yyyy').format(product.createDate),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          _buildImportDate,
-          SizedBox(
-            height: 40,
-          ),
-          _buildAddMoreStock,
-          SizedBox(
-            height: 20,
-          ),
-          _buildEditinfo,
         ],
       ),
     );
   }
 
-  get _buildDescription {
+  Container buildMyCard({
+    String title,
+    double titleSize,
+    String value,
+    double valueSize,
+  }) {
     return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+      decoration: BoxDecoration(
+        color: Colors.red.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(height: 15),
+          Text(
+            title ?? "Title",
+            style: TextStyle(
+              color: Color(0xFF243859),
+              fontSize: titleSize ?? 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 15),
+          Center(
+            child: Text(
+              value ?? "Value",
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: value.length > 4 ? 40 : 64,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container buildDescription() {
+    return Container(
+      alignment: Alignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            alignment: Alignment.topLeft,
             child: Text(
-              'Descriptions',
+              product.name,
               style: TextStyle(
                 color: Color(0xFF243859),
-                fontSize: 18,
+                fontSize: 36,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
+          SizedBox(height: 8),
           Container(
-            padding: EdgeInsets.all(10),
             child: Text(
-              desc,
+              product.desc ?? 'descriptionn',
               style: TextStyle(
                 color: Color(0xFF4B5B75),
-                fontWeight: FontWeight.bold,
+                fontSize: 16,
               ),
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  get _buildStock {
-    return Container(
-      height: 50,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        border: Border.all(color: Color(0xFFE53C49)),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Container(
-        padding: EdgeInsets.only(left: 10, right: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Stock",
-              style: TextStyle(
-                color: Color(0xFF243859),
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              numOfStock,
-              style: TextStyle(
-                color: Color(0xFF4B5B75),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  get _buildPrice {
-    return Container(
-      height: 50,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        border: Border.all(color: Color(0xFFE53C49)),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Container(
-        padding: EdgeInsets.only(left: 10, right: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Price",
-              style: TextStyle(
-                color: Color(0xFF243859),
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              price,
-              style: TextStyle(
-                color: Color(0xFF4B5B75),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  get _buildImportDate {
-    return Container(
-      height: 50,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        border: Border.all(color: Color(0xFFE53C49)),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Container(
-        padding: EdgeInsets.only(left: 10, right: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Date",
-              style: TextStyle(
-                color: Color(0xFF243859),
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              date,
-              style: TextStyle(
-                color: Color(0xFF4B5B75),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  get _buildAddMoreStock {
-    return Container(
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: Color(0xFFE53C49),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: TextButton(
-        onPressed: () {},
-        child: Text(
-          "Add More Stock",
-          style: TextStyle(
-            color: Color(0xFFFFFFFF),
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
-  }
-
-  get _buildEditinfo {
-    return Container(
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        border: Border.all(color: Color(0xFFE53C49)),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: TextButton(
-        onPressed: () {},
-        child: Text(
-          "Edit information",
-          style: TextStyle(
-            color: Color(0xFFE53C49),
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
       ),
     );
   }

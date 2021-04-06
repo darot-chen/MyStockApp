@@ -14,9 +14,9 @@ class ProductNotifier extends ChangeNotifier {
   int totalQuantityInHand = 0;
 
   ProductModel productModel;
-  HttpService http = HttpService();
 
   Future load(String endPoint) async {
+    HttpService http = HttpService();
     Response response;
     try {
       setLoading(true);
@@ -35,6 +35,44 @@ class ProductNotifier extends ChangeNotifier {
       setLoading(false);
       print(e);
     }
+  }
+
+  Future createProduct({
+    String endPoint,
+    String id,
+    String name,
+    String quanitity,
+    String sellPrice,
+    String catName,
+    String desc,
+    String createDate,
+  }) async {
+    Response response;
+    HttpService http = HttpService();
+    try {
+      setLoading(true);
+      response = await http.postRequest(
+        endPoint: endPoint,
+        id: id,
+        name: name,
+        quanitity: quanitity,
+        sellPrice: sellPrice,
+        catName: catName,
+        desc: desc,
+        createDate: createDate,
+      );
+      setLoading(false);
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
+        print("product created succesfully");
+        print(response.data);
+      } else {
+        print("There is some problem status code not 200");
+      }
+    } on Exception catch (e) {
+      setLoading(false);
+      print(e);
+    }
+    notifyListeners();
   }
 
   setProductList(List<Product> products) {
@@ -70,6 +108,13 @@ final productNotifier = ChangeNotifierProvider.family<ProductNotifier, String>(
   (ref, endpoint) {
     var notifier = ProductNotifier();
     notifier.load(endpoint);
+    return notifier;
+  },
+);
+
+final getProductNotifier = ChangeNotifierProvider<ProductNotifier>(
+  (ref) {
+    var notifier = ProductNotifier();
     return notifier;
   },
 );

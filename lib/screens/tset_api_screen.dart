@@ -1,9 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:my_stock/components/my_app_bar.dart';
-import 'package:my_stock/components/product_list_tile.dart';
 import 'package:my_stock/models/product_models.dart';
-import 'package:my_stock/network/create_product.dart';
 import 'package:my_stock/network/http_service.dart';
 
 class TestApiScreen extends StatefulWidget {
@@ -60,7 +58,7 @@ class _TestApiScreenState extends State<TestApiScreen> {
         children: [
           TextButton(
             child: Text('Get product'),
-            onPressed: createProduct,
+            onPressed: (){},
           ),
         ],
       ),

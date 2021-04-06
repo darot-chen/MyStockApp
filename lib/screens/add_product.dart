@@ -4,61 +4,65 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:my_stock/components/my_app_bar.dart';
 import 'package:my_stock/components/my_dropdown.dart';
 import 'package:my_stock/models/categories_model.dart';
-import 'package:my_stock/network/create_product.dart';
+import 'package:my_stock/models/product_models.dart';
 import 'package:my_stock/notifier/categories_notifier.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:my_stock/notifier/product_notifier.dart';
+
+import 'navigation_bar.dart';
 
 class AddProduct extends HookWidget {
+  AddProduct({this.product});
+  final Product product;
+
   final _formKey = GlobalKey<FormState>();
-  TextEditingController productIdFormController = TextEditingController();
-  TextEditingController productFormController = TextEditingController();
-  TextEditingController quantityFormController = TextEditingController();
-  TextEditingController priceFormController = TextEditingController();
-  TextEditingController descFormController = TextEditingController();
   CalendarController calendarController = CalendarController();
 
-  String categoryName;
+  String catName;
   String productId;
   String productName;
   String quantity;
   String price;
   String desc;
   DateTime selectDate;
+
   @override
   Widget build(BuildContext context) {
+    var notifier = useProvider(getProductNotifier);
     var catNotifier = useProvider(categoryNotifier);
     var categories = catNotifier.categories;
 
+    bool isHasProduct = product != null;
+    if (isHasProduct) catName = product.catId[0].name;
+
     _saveForm() {
       var form = _formKey.currentState;
-      if (categoryName != null) {
-        if (form.validate()) {
-          form.save();
+      if (form.validate()) {
+        form.save();
 
-          productId = productIdFormController.text;
-          productName = productFormController.text;
-          quantity = quantityFormController.text;
-          price = priceFormController.text;
-          desc = descFormController.text ?? "";
+        notifier.createProduct(
+          endPoint:
+              isHasProduct ? '/update_product.php' : '/create_product.php',
+          id: isHasProduct ? product.id : productId,
+          catName: catName,
+          name: productName,
+          quanitity: quantity,
+          sellPrice: price,
+          desc: desc,
+          createDate: calendarController.selectedDate.toString(),
+        );
 
-          createProduct(
-            endPoint: '/create_product.php',
-            id: productId.trim(),
-            catName: categoryName.trim(),
-            name: productName.trim(),
-            quanitity: quantity.trim(),
-            sellPrice: price.trim(),
-            desc: desc,
-            createDate: calendarController.selectedDate.toString(),
-          );
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Add Product Succesfully'),
-            ),
-          );
-          Navigator.pop(context);
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Add Product Succesfully'),
+          ),
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => NavigationTabBar(),
+          ),
+        );
       } else {
         return ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -77,75 +81,100 @@ class AddProduct extends HookWidget {
       },
       child: Scaffold(
         appBar: MyAppBar(title: 'New Product'),
-        body: SingleChildScrollView(
-          padding: EdgeInsets.all(15),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                chooseCategory(categories),
-                myForm(
-                  controller: productIdFormController,
-                  labelTitle: 'Product Id',
-                  message: 'Please input number',
-                  keyBoardType: TextInputType.number,
-                  onSaved: (value) {
-                    productName = value;
-                  },
-                ),
-                myForm(
-                  controller: productFormController,
-                  labelTitle: 'Product Name',
-                  message: 'Please input number',
-                  keyBoardType: TextInputType.text,
-                  onSaved: (value) {
-                    productName = value;
-                  },
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        body: Stack(
+          children: [
+            if (notifier.loading) Center(child: CircularProgressIndicator()),
+            SingleChildScrollView(
+              padding: EdgeInsets.all(15),
+              child: Form(
+                key: _formKey,
+                child: Column(
                   children: [
-                    myForm(
-                        controller: quantityFormController,
-                        labelTitle: "Quantity",
-                        message: "Please input valid number",
-                        keyBoardType: TextInputType.number,
-                        width: 185,
-                        onSaved: (value) {
-                          quantity = value;
-                        }),
-                    myForm(
-                      controller: priceFormController,
-                      labelTitle: "Price",
-                      message: "Please input valid number",
-                      keyBoardType:
-                          TextInputType.numberWithOptions(decimal: true),
-                      width: 185,
+                    chooseCategory(
+                      categories: categories,
+                      isHasProduct: isHasProduct,
+                      message: 'Please Choose A Category',
                       onSaved: (value) {
-                        price = value;
+                        if (value != null) {
+                          catName = value;
+                        }
+                      },
+                      onChanged: (value) {
+                        print(value);
                       },
                     ),
-                  ],
-                ),
-                descForm(),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Choose Date",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFF4B5B75),
-                        fontWeight: FontWeight.w700,
-                      ),
+                    isHasProduct
+                        ? SizedBox()
+                        : myForm(
+                            initialValue: isHasProduct ? product.id : '',
+                            labelTitle: 'Product Id',
+                            message: 'Please input number',
+                            keyBoardType: TextInputType.number,
+                            onSaved: (value) {
+                              productId = value;
+                            },
+                          ),
+                    myForm(
+                      initialValue: isHasProduct ? product.name : "",
+                      labelTitle: 'Product Name',
+                      message: 'Please input number',
+                      keyBoardType: TextInputType.text,
+                      onSaved: (value) {
+                        productName = value;
+                      },
                     ),
-                    buildCarlendar(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        myForm(
+                          initialValue: isHasProduct ? product.quantity : '',
+                          labelTitle: "Quantity",
+                          message: "Please input valid number",
+                          keyBoardType: TextInputType.number,
+                          width: 185,
+                          onSaved: (value) {
+                            quantity = value;
+                          },
+                        ),
+                        myForm(
+                          initialValue: isHasProduct ? product.sellPrice : '',
+                          labelTitle: "Price",
+                          message: "Please input valid number",
+                          keyBoardType:
+                              TextInputType.numberWithOptions(decimal: true),
+                          width: 185,
+                          onSaved: (value) {
+                            price = value;
+                          },
+                        ),
+                      ],
+                    ),
+                    descForm(
+                      isHasProduct: isHasProduct,
+                      onSaved: (value) {
+                        desc = value;
+                      },
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Choose Date",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Color(0xFF4B5B75),
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        buildCarlendar(isHasProduct),
+                      ],
+                    ),
+                    SizedBox(height: 100),
                   ],
                 ),
-                SizedBox(height: 100),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
         bottomNavigationBar: Container(
           alignment: Alignment.topCenter,
@@ -191,11 +220,12 @@ class AddProduct extends HookWidget {
     String labelTitle,
     String message,
     TextInputType keyBoardType,
-    TextEditingController controller,
+    String initialValue,
     String value,
     String hintText,
     double width,
     Function onSaved,
+    Function onChange,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,7 +244,7 @@ class AddProduct extends HookWidget {
           width: width ?? double.infinity,
           alignment: Alignment.center,
           child: TextFormField(
-            controller: controller,
+            initialValue: initialValue,
             cursorColor: Color(0xFF4B5B75),
             maxLines: 1,
             textAlign: TextAlign.start,
@@ -230,6 +260,7 @@ class AddProduct extends HookWidget {
               return null;
             },
             onSaved: onSaved,
+            onChanged: onChange,
             decoration: InputDecoration(
               fillColor: Color(0xFFE1E1E1),
               filled: true,
@@ -250,7 +281,13 @@ class AddProduct extends HookWidget {
     );
   }
 
-  Container chooseCategory(List<Category> categories) {
+  Container chooseCategory({
+    List<Category> categories,
+    bool isHasProduct,
+    String message,
+    Function onSaved,
+    Function onChanged,
+  }) {
     return Container(
       margin: EdgeInsets.only(bottom: 15),
       child: Column(
@@ -272,11 +309,19 @@ class AddProduct extends HookWidget {
             child: MyDropDown(
               height: 48,
               items: categories,
-              onChanged: (value) {
-                categoryName = value;
-                print(value);
+              onSaved: onSaved,
+              onChanged: onChanged,
+              validator: (value) {
+                if (isHasProduct) {
+                  return null;
+                }
+                if (value == null || value.isEmpty && !isHasProduct) {
+                  return message;
+                }
+                return null;
               },
-              hintText: Text('Category'),
+              hintText:
+                  Text(product != null ? product.catId[0].name : 'Category'),
               icon: Icon(Icons.arrow_drop_down_circle),
             ),
           ),
@@ -285,7 +330,10 @@ class AddProduct extends HookWidget {
     );
   }
 
-  Column descForm() {
+  Column descForm({
+    bool isHasProduct,
+    Function onSaved,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -303,7 +351,7 @@ class AddProduct extends HookWidget {
           width: double.infinity,
           alignment: Alignment.center,
           child: TextFormField(
-            controller: descFormController,
+            initialValue: isHasProduct ? product.desc : "",
             cursorColor: Color(0xFF4B5B75),
             maxLines: 5,
             textAlign: TextAlign.start,
@@ -312,9 +360,7 @@ class AddProduct extends HookWidget {
               fontSize: 12,
               color: Color(0xFF4B5B75),
             ),
-            onSaved: (value) {
-              desc = value;
-            },
+            onSaved: onSaved,
             decoration: InputDecoration(
               fillColor: Color(0xFFE1E1E1),
               filled: true,
@@ -334,7 +380,9 @@ class AddProduct extends HookWidget {
     );
   }
 
-  Container buildCarlendar() {
+  Container buildCarlendar(
+    bool isHasProduct,
+  ) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 15),
       padding: EdgeInsets.all(10),
@@ -345,7 +393,7 @@ class AddProduct extends HookWidget {
       child: SfCalendar(
         controller: calendarController,
         backgroundColor: Colors.transparent,
-        initialSelectedDate: DateTime.now(),
+        initialSelectedDate: isHasProduct ? product.createDate : DateTime.now(),
         view: CalendarView.month,
         showDatePickerButton: true,
         showNavigationArrow: true,

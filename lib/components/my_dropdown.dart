@@ -8,6 +8,8 @@ class MyDropDown extends StatelessWidget {
   final Widget icon;
   final String value;
   final Function onChanged;
+  final Function onSaved;
+  final Function validator;
 
   MyDropDown({
     this.height,
@@ -16,13 +18,14 @@ class MyDropDown extends StatelessWidget {
     this.items,
     this.value,
     this.onChanged,
+    this.onSaved,
+    this.validator,
   });
 
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
       itemHeight: height,
-      value: value,
       items: List.generate(
         items.length,
         (index) {
@@ -35,8 +38,10 @@ class MyDropDown extends StatelessWidget {
         },
       ),
       hint: hintText,
+      validator: validator,
       icon: icon,
       onChanged: onChanged,
+      onSaved: onSaved,
       decoration: InputDecoration(
         fillColor: Color(0xFFE1E1E1),
         filled: true,

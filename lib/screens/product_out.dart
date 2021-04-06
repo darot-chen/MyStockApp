@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:my_stock/components/my_app_bar.dart';
 import 'package:my_stock/components/product_list_tile.dart';
 import 'package:my_stock/models/product_out_model.dart';
@@ -284,7 +283,6 @@ class ProductOutScreen extends HookWidget {
               minChildSize: 0.2,
               maxChildSize: 0.75,
               builder: (_, controller) {
-                DateFormat formater = DateFormat('dd/MMM/yyy');
                 return Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -302,7 +300,8 @@ class ProductOutScreen extends HookWidget {
                       Expanded(
                         child: Consumer(
                           builder: (context, watch, child) {
-                            var _notifier = watch(productNotifier('/get_products.php'));
+                            var _notifier =
+                                watch(productNotifier('/get_products.php'));
                             var listProduct = _notifier.productsList;
                             listProduct.sort((a, b) => a.id.compareTo(b.id));
                             if (listProduct == null)
@@ -313,7 +312,6 @@ class ProductOutScreen extends HookWidget {
                                 itemCount: listProduct.length,
                                 itemBuilder: (_, index) {
                                   var product = listProduct[index];
-                                  String date = formater.format(product.createDate);
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 8.0,
@@ -325,11 +323,7 @@ class ProductOutScreen extends HookWidget {
                                         Navigator.of(context).pop();
                                       },
                                       child: MyProductListTile(
-                                        date: date,
-                                        name: product.name,
-                                        id: product.id,
-                                        subTitle: product.desc,
-                                        numOfStock: product.quantity,
+                                        product: product,
                                         trailingTitle: 'In Stock',
                                       ),
                                     ),

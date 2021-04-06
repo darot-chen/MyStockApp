@@ -66,7 +66,7 @@ class MyProductListTile extends StatelessWidget {
               ),
             ),
             Text(
-              subTitle,
+              subTitle ?? "",
               style: TextStyle(color: Colors.white54),
               overflow: TextOverflow.ellipsis,
             ),

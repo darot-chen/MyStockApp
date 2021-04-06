@@ -21,10 +21,12 @@ class ProductListScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    String endPoint = id != null ?"/get_product_by_cat_id.php?catId=$id" : '/get_products.php';
+    String endPoint = id != null
+        ? "/get_product_by_cat_id.php?catId=$id"
+        : '/get_products.php';
     var notifier = useProvider(productNotifier(endPoint));
     var products = notifier.productsList;
-    
+
     return Scaffold(
       appBar: MyAppBar(
         title: title,
@@ -45,8 +47,8 @@ class ProductListScreen extends HookWidget {
           ? Center(child: CircularProgressIndicator())
           : products != null
               ? RefreshIndicator(
-                  onRefresh: (){
-                    return;
+                  onRefresh: () {
+                    return notifier.load(endPoint);
                   },
                   child: buildProductList(
                     isLoading: notifier.loading,

@@ -64,18 +64,6 @@ class ProductNotifier extends ChangeNotifier {
     this.loading = loading;
     notifyListeners();
   }
-
-  // updateTotalQuantityIn(int quantity) {
-  //   this.totalQuantityIn += quantity;
-  //   this.totalQuantityInHand += quantity;
-  //   notifyListeners();
-  // }
-
-  // updateTotalQuantityOut(int quantity) {
-  //   this.totalQuantityInHand -= quantity;
-  //   this.totalQuantityOut += quantity;
-  //   notifyListeners();
-  // }
 }
 
 final productNotifier = ChangeNotifierProvider.family<ProductNotifier, String>(

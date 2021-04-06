@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:my_stock/models/categories_model.dart';
 
 class MyDropDown extends StatelessWidget {
-  final List<String> items;
+  final List<Category> items;
   final double height;
   final Widget hintText;
   final Widget icon;
@@ -16,22 +17,23 @@ class MyDropDown extends StatelessWidget {
     this.value,
     this.onChanged,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
       itemHeight: height,
       value: value,
-      items: items
-          .map(
-            (label) => DropdownMenuItem(
-              child: Text(
-                label.toString(),
-              ),
-              value: label,
+      items: List.generate(
+        items.length,
+        (index) {
+          return DropdownMenuItem(
+            child: Text(
+              items[index].name,
             ),
-          )
-          .toList(),
+            value: items[index].name,
+          );
+        },
+      ),
       hint: hintText,
       icon: icon,
       onChanged: onChanged,

@@ -101,30 +101,7 @@ class ProductInScreen extends HookWidget {
     );
   }
 
-  Container lifeStatus() {
-    return Container(
-      height: 58,
-      width: 170,
-      alignment: Alignment.center,
-      child: MyDropDown(
-        height: 48,
-        items: ['Long', 'Medium', 'Short'],
-        value: _lifeStatus,
-        onChanged: (value) {
-          _lifeStatus = value;
-        },
-        hintText: Text(
-          'Life Status',
-          style: TextStyle(
-            fontSize: 18,
-            color: Color(0xFF4B5B75),
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        icon: Icon(Icons.arrow_drop_down_circle),
-      ),
-    );
-  }
+  
 
   TextButton buildSubmitBtn({Function onPressed}) {
     return TextButton(

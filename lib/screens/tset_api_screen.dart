@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:my_stock/components/my_app_bar.dart';
 import 'package:my_stock/components/product_list_tile.dart';
 import 'package:my_stock/models/product_models.dart';
+import 'package:my_stock/network/create_product.dart';
 import 'package:my_stock/network/http_service.dart';
 
 class TestApiScreen extends StatefulWidget {
@@ -57,37 +58,9 @@ class _TestApiScreenState extends State<TestApiScreen> {
       appBar: MyAppBar(title: 'Test Api'),
       body: Column(
         children: [
-          // TextButton(
-          //   child: Text('Get product'),
-          //   onPressed: getListUser,
-          // ),
-          Container(
-            color: Colors.blue,
-            height: 700,
-            child: isLoading
-                ? Center(child: CircularProgressIndicator())
-                : products != null
-                    ? RefreshIndicator(
-                        onRefresh: getProduct,
-                        child: ListView.builder(
-                          itemBuilder: (context, index) {
-                            final product = products[index];
-
-                            return MyProductListTile(
-                              id: product.id,
-                              name: product.name,
-                              date: product.createDate.toString(),
-                              subTitle: product.desc,
-                              numOfStock: product.quantity,
-                              trailingTitle: 'In Stock',
-                            );
-                          },
-                          itemCount: products.length,
-                        ),
-                      )
-                    : Center(
-                        child: Text("No User Object"),
-                      ),
+          TextButton(
+            child: Text('Get product'),
+            onPressed: createProduct,
           ),
         ],
       ),

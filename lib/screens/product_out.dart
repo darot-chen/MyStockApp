@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:my_stock/components/my_app_bar.dart';
 import 'package:my_stock/components/product_list_tile.dart';
-import 'package:my_stock/models/product_model.dart';
+import 'package:my_stock/models/product_out_model.dart';
 import 'package:my_stock/notifier/product_notifier.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 

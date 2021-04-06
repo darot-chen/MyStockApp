@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:my_stock/components/my_app_bar.dart';
 import 'package:my_stock/notifier/categories_notifier.dart';
+import 'package:my_stock/screens/add_product.dart';
 import 'package:my_stock/screens/product_list_screen.dart';
 
 import 'add_product_screen.dart';
@@ -44,7 +45,7 @@ class Home extends HookWidget {
         onPressed: () {
           Navigator.of(context, rootNavigator: true).push(
             MaterialPageRoute(
-              builder: (context) => AddProductPage(),
+              builder: (context) => AddProduct(),
             ),
           );
         },

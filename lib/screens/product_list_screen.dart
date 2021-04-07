@@ -8,6 +8,8 @@ import 'package:my_stock/components/show_bottom_sheet.dart';
 import 'package:my_stock/models/product_models.dart';
 import 'package:my_stock/notifier/product_notifier.dart';
 
+import 'add_product.dart';
+
 class ProductListScreen extends HookWidget {
   final String title;
   final String id;
@@ -27,6 +29,17 @@ class ProductListScreen extends HookWidget {
     var products = notifier.productsList;
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context, rootNavigator: true).push(
+            MaterialPageRoute(
+              builder: (context) => AddProduct(),
+            ),
+          );
+        },
+        foregroundColor: Colors.white,
+        child: Icon(Icons.add),
+      ),
       appBar: MyAppBar(
         title: title,
         action: [

@@ -3,7 +3,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:my_stock/components/build_action_btn.dart';
 import 'package:my_stock/components/my_app_bar.dart';
-import 'package:intl/intl.dart';
 import 'package:my_stock/components/product_list_tile.dart';
 import 'package:my_stock/components/show_bottom_sheet.dart';
 import 'package:my_stock/models/product_models.dart';
@@ -71,17 +70,10 @@ class ProductListScreen extends HookWidget {
         productList.length,
         (index) {
           var product = productList[index];
-          DateFormat formater = DateFormat('dd/MMM/yyy');
-          String date = formater.format(product.createDate);
           return Container(
             margin: EdgeInsets.all(5),
             child: MyProductListTile(
-              date: date,
-              name: product.name,
-              category: product.catId[0].name,
-              id: product.id,
-              subTitle: product.desc,
-              numOfStock: product.quantity,
+              product: product,
               trailingTitle: 'In Stock',
             ),
           );

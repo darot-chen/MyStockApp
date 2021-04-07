@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 
 class HttpService {
@@ -35,7 +33,7 @@ class HttpService {
     Response response;
     try {
       response = await _dio.post(
-        'http://localhost:8888/StockAPI/create_product.php',
+        '$baseUrl$endPoint',
         data: {
           "id": id,
           "name": name,

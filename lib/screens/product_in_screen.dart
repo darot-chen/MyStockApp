@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:my_stock/components/my_app_bar.dart';
-import 'package:my_stock/components/my_dropdown.dart';
 import 'package:my_stock/components/product_list_tile.dart';
 import 'package:my_stock/models/product_models.dart';
 import 'package:my_stock/notifier/product_notifier.dart';
@@ -32,7 +30,7 @@ class ProductInScreen extends HookWidget {
           form.save();
           // choosedProduct.quantity += _quantity;
           choosedProduct.createDate = calendarController.selectedDate;
-          notifier.updateProduct(choosedProduct);
+          // notifier.updateProduct(choosedProduct);
           notifier.choosedProduct = null;
 
           ScaffoldMessenger.of(context).showSnackBar(
@@ -100,8 +98,6 @@ class ProductInScreen extends HookWidget {
       ),
     );
   }
-
-  
 
   TextButton buildSubmitBtn({Function onPressed}) {
     return TextButton(
@@ -288,7 +284,6 @@ class ProductInScreen extends HookWidget {
               minChildSize: 0.2,
               maxChildSize: 0.75,
               builder: (_, controller) {
-                DateFormat formater = DateFormat('dd/MMM/yyy');
                 return Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -306,7 +301,8 @@ class ProductInScreen extends HookWidget {
                       Expanded(
                         child: Consumer(
                           builder: (context, watch, child) {
-                            var _notifier = watch(productNotifier('/get_products.php'));
+                            var _notifier =
+                                watch(productNotifier('/get_products.php'));
                             var listProduct = _notifier.productsList;
                             listProduct.sort((a, b) => a.id.compareTo(b.id));
                             if (listProduct == null)
@@ -317,8 +313,6 @@ class ProductInScreen extends HookWidget {
                                 itemCount: listProduct.length,
                                 itemBuilder: (_, index) {
                                   var product = listProduct[index];
-                                  String date =
-                                      formater.format(product.createDate);
                                   return Padding(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 8.0,
@@ -329,14 +323,11 @@ class ProductInScreen extends HookWidget {
                                         _notifier.chooseProduct(product);
                                         Navigator.of(context).pop();
                                       },
-                                      child: MyProductListTile(
-                                        date: date,
-                                        name: product.name,
-                                        category: product.catId[0].name,
-                                        id: product.id,
-                                        subTitle: product.desc,
-                                        numOfStock: product.quantity,
-                                        trailingTitle: 'In Stock',
+                                      child: IgnorePointer(
+                                        child: MyProductListTile(
+                                          product: product,
+                                          trailingTitle: 'In Stock',
+                                        ),
                                       ),
                                     ),
                                   );

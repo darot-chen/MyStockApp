@@ -27,7 +27,7 @@ class ProductDetailPage extends HookWidget {
           IconButton(
             icon: Icon(Icons.delete_rounded),
             onPressed: () {
-              notifier.createProduct(
+              notifier.productPostRequest(
                 endPoint: '/delete_product.php?',
                 id: product.id,
               );

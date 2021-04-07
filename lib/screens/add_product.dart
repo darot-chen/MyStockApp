@@ -40,7 +40,7 @@ class AddProduct extends HookWidget {
       if (form.validate()) {
         form.save();
 
-        notifier.createProduct(
+        notifier.productPostRequest(
           endPoint:
               isHasProduct ? '/update_product.php' : '/create_product.php',
           id: isHasProduct ? product.id : productId,

@@ -28,9 +28,17 @@ class ProductInScreen extends HookWidget {
         );
         if (form.validate()) {
           form.save();
-          // choosedProduct.quantity += _quantity;
+          int totalStock = int.parse(choosedProduct.quantity) + _quantity;
+
+          choosedProduct.quantity = totalStock.toString();
           choosedProduct.createDate = calendarController.selectedDate;
-          // notifier.updateProduct(choosedProduct);
+
+          notifier.productPostRequest(
+            endPoint: '/update_product.php',
+            id: choosedProduct.id,
+            quanitity: choosedProduct.quantity,
+            createDate: choosedProduct.createDate.toString(),
+          );
           notifier.choosedProduct = null;
 
           ScaffoldMessenger.of(context).showSnackBar(

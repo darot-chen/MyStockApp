@@ -37,7 +37,7 @@ class ProductNotifier extends ChangeNotifier {
     }
   }
 
-  Future createProduct({
+  Future productPostRequest({
     String endPoint,
     String id,
     String name,

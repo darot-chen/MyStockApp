@@ -279,7 +279,7 @@ class ProductDetailPage extends HookWidget {
               maxLines: 2,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: value.length > 4 ? 40 : 64,
+                fontSize: value.length > 3 ? 40 : 64,
                 fontWeight: FontWeight.bold,
               ),
             ),

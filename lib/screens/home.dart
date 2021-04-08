@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:my_stock/components/my_app_bar.dart';
+import 'package:my_stock/models/categories_model.dart';
 import 'package:my_stock/notifier/categories_notifier.dart';
 import 'package:my_stock/notifier/product_notifier.dart';
 import 'package:my_stock/screens/product_list_screen.dart';
@@ -11,107 +12,112 @@ class Home extends HookWidget {
   @override
   Widget build(BuildContext context) {
     var notifier = useProvider(categoryNotifier);
-    var categories = notifier.categories;
     String catName;
-    return Scaffold(
-      appBar: MyAppBar(title: "MyStock", backIcon: false),
-      body: RefreshIndicator(
-        onRefresh: () {
-          return notifier.load();
-        },
-        child: notifier.loading
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : GridView(
-                padding: EdgeInsets.all(15),
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 200,
-                  mainAxisSpacing: 15,
-                  crossAxisSpacing: 15,
-                  childAspectRatio: 155 / 100,
-                ),
-                children: List.generate(
-                  categories.length + 1,
-                  (index) {
-                    if (index == categories.length) {
-                      return catCard(
-                        context: context,
-                        catName: 'All Products',
-                        isLastIndex: true,
-                      );
-                    }
-                    return catCard(
-                      context: context,
-                      catName: categories[index].name,
-                      catId: categories[index].id,
-                    );
-                  },
-                ),
-              ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (_) => alertDialog(
-              title: 'New Category',
-              rButtonText: 'OK',
-              hintText: 'Category Name',
-              catName: catName,
-              context: context,
-              onSaved: (value) {
-                catName = value;
-              },
-              onChanged: (String value) {
-                notifier.setCatExist(false);
-                for (var item in categories) {
-                  if (item.name.toLowerCase() == value.toLowerCase()) {
-                    notifier.setCatExist(true);
-                  }
+    if (notifier.loading) {
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    } else {
+      var categories = notifier.categories;
+      // notifier.load();
+      return Scaffold(
+        appBar: MyAppBar(title: "MyStock", backIcon: false),
+        body: RefreshIndicator(
+          onRefresh: () {
+            return notifier.load();
+          },
+          child: GridView(
+            padding: EdgeInsets.all(15),
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 200,
+              mainAxisSpacing: 15,
+              crossAxisSpacing: 15,
+              childAspectRatio: 155 / 100,
+            ),
+            children: List.generate(
+              categories.length + 1,
+              (index) {
+                if (index == categories.length) {
+                  return catCard(
+                    context: context,
+                    catName: 'All Products',
+                    isLastIndex: true,
+                  );
                 }
+                return catCard(
+                  context: context,
+                  catName: categories[index].name,
+                  catId: categories[index].id,
+                );
               },
-              onPressed: () {
-                var form = _formKey.currentState;
-                if (form.validate()) {
-                  form.save();
+            ),
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (_) => alertDialog(
+                title: 'New Category',
+                rButtonText: 'OK',
+                hintText: 'Category Name',
+                catName: catName,
+                context: context,
+                onSaved: (value) {
+                  catName = value;
+                },
+                onChanged: (String value) {
+                  notifier.setCatExist(false);
+                  for (var item in categories) {
+                    if (item.name.toLowerCase() == value.toLowerCase()) {
+                      notifier.setCatExist(true);
+                    }
+                  }
+                },
+                onPressed: () {
+                  var form = _formKey.currentState;
+                  if (form.validate()) {
+                    form.save();
+                    notifier.isCatExist
+                        ? showDialog(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                              title: Text("Product Exist false"),
+                            ),
+                          )
+                        : notifier.categoryPostRequest(
+                            endPoint: '/create_category.php',
+                            name: catName.trim(),
+                          );
+                    notifier.load();
+                    Navigator.pop(context);
+                  }
                   notifier.isCatExist
                       ? showDialog(
                           context: context,
                           builder: (_) => AlertDialog(
-                            title: Text("Product Exist false"),
+                            title: Text("Create Failed"),
+                            content: Text('Category is existed'),
                           ),
                         )
-                      : notifier.categoryPostRequest(
-                          endPoint: '/create_category.php',
-                          name: catName.trim(),
+                      : showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: Text("Create Succeffully"),
+                            content: Text('Category is created'),
+                          ),
                         );
-                  notifier.load();
-                  Navigator.pop(context);
-                }
-                notifier.isCatExist
-                    ? showDialog(
-                        context: context,
-                        builder: (_) => AlertDialog(
-                          title: Text("Create Failed"),
-                          content: Text('Category is existed'),
-                        ),
-                      )
-                    : showDialog(
-                        context: context,
-                        builder: (_) => AlertDialog(
-                          title: Text("Create Succeffully"),
-                          content: Text('Category is created'),
-                        ),
-                      );
-              },
-            ),
-          );
-        },
-        foregroundColor: Colors.white,
-        child: Icon(Icons.add),
-      ),
-    );
+                },
+              ),
+            );
+          },
+          foregroundColor: Colors.white,
+          child: Icon(Icons.add),
+        ),
+      );
+    }
   }
 
   Container catCard({
@@ -121,6 +127,7 @@ class Home extends HookWidget {
     bool isLastIndex = false,
   }) {
     var notifier = useProvider(categoryNotifier);
+    var categories = notifier.categories;
     var proNotifier = useProvider(
       productNotifier("/get_product_by_cat_id.php?catId=$catId"),
     );
@@ -139,11 +146,59 @@ class Home extends HookWidget {
                     ? showDialog(
                         context: context,
                         builder: (context) => alertDialog(
-                          context: context,
-                          title: 'Update',
-                          rButtonText: 'Update',
-                          catName: catName,
-                        ),
+                            context: context,
+                            title: 'Update',
+                            rButtonText: 'Update',
+                            catName: catName,
+                            onSaved: (value) {
+                              catName = value;
+                            },
+                            onChanged: (String value) {
+                              notifier.setCatExist(false);
+                              for (var item in categories) {
+                                if (item.name.toLowerCase() ==
+                                    value.toLowerCase()) {
+                                  notifier.setCatExist(true);
+                                }
+                              }
+                            },
+                            onPressed: () {
+                              var form = _formKey.currentState;
+                              if (form.validate()) {
+                                form.save();
+                                notifier.isCatExist
+                                    ? showDialog(
+                                        context: context,
+                                        builder: (_) => AlertDialog(
+                                          title: Text("Product Exist false"),
+                                        ),
+                                      )
+                                    : print(catId + catName);
+
+                                notifier.categoryPostRequest(
+                                  endPoint: '/update_category.php',
+                                  id: catId,
+                                  name: catName.trim(),
+                                );
+                                notifier.load();
+                                Navigator.pop(context);
+                              }
+                              notifier.isCatExist
+                                  ? showDialog(
+                                      context: context,
+                                      builder: (_) => AlertDialog(
+                                        title: Text("Create Failed"),
+                                        content: Text('Category is existed'),
+                                      ),
+                                    )
+                                  : showDialog(
+                                      context: context,
+                                      builder: (_) => AlertDialog(
+                                        title: Text("Updated"),
+                                        content: Text('Category is updated'),
+                                      ),
+                                    );
+                            }),
                       )
                     : showDialog(
                         context: context,

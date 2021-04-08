@@ -63,23 +63,6 @@ class AddProduct extends HookWidget {
           createDate: calendarController.selectedDate.toString(),
         );
         Navigator.pop(context);
-        // notifier.loading
-        //     ? showDialog(
-        //         context: context,
-        //         builder: (_) => AlertDialog(
-        //           content: Container(
-        //             height: 70,
-        //             width: 70,
-        //             child: Center(child: CircularProgressIndicator()),
-        //           ),
-        //         ),
-        //       )
-        //     : ScaffoldMessenger.of(context).showSnackBar(
-        //         SnackBar(
-        //           content: Text('Add Product Succesfully'),
-        //         ),
-        //       );
-        // Navigator.pop(context);
       } else {
         return ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -97,7 +80,7 @@ class AddProduct extends HookWidget {
         }
       },
       child: Scaffold(
-        appBar: MyAppBar(title: 'New Product'),
+        appBar: MyAppBar(title: isHasProduct ? 'Edit Product' : 'New Product'),
         body: Stack(
           children: [
             if (notifier.loading) Center(child: CircularProgressIndicator()),

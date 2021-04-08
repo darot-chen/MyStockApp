@@ -18,13 +18,9 @@ class ProductNotifier extends ChangeNotifier {
   Future load(String endPoint) async {
     HttpService http = HttpService();
     Response response;
+    setLoading(true);
     try {
-      setLoading(true);
-
       response = await http.getRequest(endpoint: endPoint);
-
-      setLoading(false);
-
       if (response.statusCode == 200) {
         productModel = ProductModel.fromMap(response.data);
         productsList = productModel.products;
@@ -32,24 +28,26 @@ class ProductNotifier extends ChangeNotifier {
         print("There is some problem status code not 200");
       }
     } on Exception catch (e) {
-      setLoading(false);
       print(e);
     }
+    setLoading(false);
   }
 
   Future productPostRequest({
+    String prevEndPoint,
     String endPoint,
     String id,
     String name,
     String quanitity,
     String sellPrice,
     String catName,
+    String catId,
     String desc,
     String createDate,
   }) async {
     Response response;
     HttpService http = HttpService();
-    setLoading(true);
+    // setLoading(true);
     try {
       response = await http.postRequest(
         endPoint: endPoint,
@@ -58,6 +56,7 @@ class ProductNotifier extends ChangeNotifier {
         quanitity: quanitity,
         sellPrice: sellPrice,
         catName: catName,
+        catId: catId,
         desc: desc,
         createDate: createDate,
       );
@@ -70,8 +69,9 @@ class ProductNotifier extends ChangeNotifier {
     } on Exception catch (e) {
       print(e);
     }
-    setLoading(false);
-    // notifyListeners();
+    notifyListeners();
+    // load(prevEndPoint);
+    // setLoading(false);
   }
 
   setProductList(List<Product> products) {

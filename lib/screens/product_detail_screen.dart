@@ -11,118 +11,134 @@ import 'package:my_stock/screens/product_in_screen.dart';
 import 'add_product.dart';
 
 class ProductDetailPage extends HookWidget {
-  final Product product;
+  final String id;
   ProductDetailPage({
     Key key,
-    this.product,
+    this.id,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var notifier = useProvider(getProductNotifier);
-    return Scaffold(
-      appBar: MyAppBar(
-        title: product.name ?? 'Title',
-        action: [
-          IconButton(
-            icon: Icon(Icons.delete_rounded),
-            onPressed: () {
-              notifier.productPostRequest(
-                endPoint: '/delete_product.php?',
-                id: product.id,
-              );
-              // onRefresh('/get_products.php');
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Product Delete Succefully'),
-                ),
-              );
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            GridView(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.all(15),
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200,
-                mainAxisSpacing: 15,
-                crossAxisSpacing: 15,
-                childAspectRatio: 100 / 100,
-              ),
-              children: [
-                buildMyCard(
-                  title: "#ID",
-                  value: product.id,
-                ),
-                buildMyDateCard(),
-                buildMyCard(
-                  title: "Quantity",
-                  value: product.quantity,
-                ),
-                buildMyCard(
-                  title: "Price",
-                  value: '${product.sellPrice}\$',
-                ),
-              ],
+    String endPoint = '/get_product_by_id.php?id=$id';
+    var notifier = useProvider(productNotifier(endPoint));
+
+    if (notifier.loading)
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    else {
+      notifier.load(endPoint);
+      var product = notifier.productsList[0];
+      return Scaffold(
+        appBar: MyAppBar(
+          title: product.name ?? 'Title',
+          action: [
+            IconButton(
+              icon: Icon(Icons.delete_rounded),
+              onPressed: () {
+                notifier.productPostRequest(
+                  endPoint: '/delete_product.php?',
+                  id: product.id,
+                );
+                // onRefresh('/get_products.php');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Product Delete Succefully'),
+                  ),
+                );
+                Navigator.pop(context);
+              },
             ),
-            buildMyDivider(),
-            SizedBox(height: 15),
-            buildDescription(),
           ],
         ),
-      ),
-      bottomNavigationBar: Container(
-        alignment: Alignment.topCenter,
-        height: 100,
-        color: Colors.red[200],
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Expanded(
-              child: buildMyBtn(
-                color: Color(0xFF243859),
-                textColor: Colors.white,
-                title: 'Edit',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddProduct(
-                        product: product,
-                      ),
-                    ),
-                  );
-                },
+        body: RefreshIndicator(
+          onRefresh: () {
+            return notifier.load(endPoint);
+          },
+          child: ListView(
+            children: [
+              GridView(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.all(15),
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 200,
+                  mainAxisSpacing: 15,
+                  crossAxisSpacing: 15,
+                  childAspectRatio: 100 / 100,
+                ),
+                children: [
+                  buildMyCard(
+                    title: "Category",
+                    value: product.catId[0].name,
+                  ),
+                  buildMyDateCard(product),
+                  buildMyCard(
+                    title: "Quantity",
+                    value: product.quantity,
+                  ),
+                  buildMyCard(
+                    title: "Price",
+                    value: '${product.sellPrice}\$',
+                  ),
+                ],
               ),
-            ),
-            Expanded(
-              child: Consumer(builder: (context, watch, child) {
-                var notifier = watch(productNotifier('/get_products.php'));
-                return buildMyBtn(
-                  color: Colors.white,
-                  title: 'Add Quantity',
+              buildMyDivider(),
+              SizedBox(height: 15),
+              buildDescription(product),
+            ],
+          ),
+        ),
+        bottomNavigationBar: Container(
+          alignment: Alignment.topCenter,
+          height: 100,
+          color: Colors.red[200],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Expanded(
+                child: buildMyBtn(
+                  color: Color(0xFF243859),
+                  textColor: Colors.white,
+                  title: 'Edit',
                   onTap: () {
-                    notifier.chooseProduct(product);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ProductInScreen(),
+                        builder: (context) => AddProduct(
+                          product: product,
+                          prevEndPoint: endPoint,
+                        ),
                       ),
                     );
                   },
-                );
-              }),
-            ),
-          ],
+                ),
+              ),
+              Expanded(
+                child: Consumer(builder: (context, watch, child) {
+                  var notifier = watch(productNotifier('/get_products.php'));
+                  return buildMyBtn(
+                    color: Colors.white,
+                    title: 'Add Quantity',
+                    onTap: () {
+                      notifier.chooseProduct(product);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ProductInScreen(),
+                        ),
+                      );
+                    },
+                  );
+                }),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   TextButton buildMyBtn({
@@ -178,7 +194,9 @@ class ProductDetailPage extends HookWidget {
     );
   }
 
-  Container buildMyDateCard() {
+  Container buildMyDateCard(
+    Product product,
+  ) {
     return Container(
       alignment: Alignment.center,
       padding: EdgeInsets.all(5),
@@ -236,16 +254,21 @@ class ProductDetailPage extends HookWidget {
         color: Colors.red.withOpacity(0.5),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+      child: Stack(
+        // mainAxisAlignment: MainAxisAlignment.start,
+        alignment: Alignment.topCenter,
         children: [
           SizedBox(height: 15),
-          Text(
-            title ?? "Title",
-            style: TextStyle(
-              color: Color(0xFF243859),
-              fontSize: titleSize ?? 24,
-              fontWeight: FontWeight.bold,
+          Container(
+            margin: EdgeInsets.only(top: 15),
+            alignment: Alignment.topCenter,
+            child: Text(
+              title ?? "Title",
+              style: TextStyle(
+                color: Color(0xFF243859),
+                fontSize: titleSize ?? 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           SizedBox(height: 15),
@@ -266,7 +289,9 @@ class ProductDetailPage extends HookWidget {
     );
   }
 
-  Container buildDescription() {
+  Container buildDescription(
+    Product product,
+  ) {
     return Container(
       alignment: Alignment.center,
       child: Column(

@@ -28,7 +28,7 @@ class MyProductListTile extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ProductDetailPage(product: product,),
+              builder: (context) => ProductDetailPage(id: product.id,),
             ),
           );
         },

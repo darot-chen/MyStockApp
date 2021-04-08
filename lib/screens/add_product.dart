@@ -6,19 +6,26 @@ import 'package:my_stock/components/my_dropdown.dart';
 import 'package:my_stock/models/categories_model.dart';
 import 'package:my_stock/models/product_models.dart';
 import 'package:my_stock/notifier/categories_notifier.dart';
+import 'package:my_stock/screens/product_detail_screen.dart';
+import 'package:my_stock/screens/product_list_screen.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:my_stock/notifier/product_notifier.dart';
 
 import 'navigation_bar.dart';
 
 class AddProduct extends HookWidget {
-  AddProduct({this.product});
+  AddProduct({
+    this.product,
+    this.prevEndPoint,
+  });
   final Product product;
+  final String prevEndPoint;
 
   final _formKey = GlobalKey<FormState>();
   CalendarController calendarController = CalendarController();
 
-  String catName;
+  // String catName;
+  String catId;
   String productId;
   String productName;
   String quantity;
@@ -33,7 +40,10 @@ class AddProduct extends HookWidget {
     var categories = catNotifier.categories;
 
     bool isHasProduct = product != null;
-    if (isHasProduct) catName = product.catId[0].name;
+    if (isHasProduct) {
+      catId = product.catId[0].id;
+      productId = product.id;
+    }
 
     _saveForm() {
       var form = _formKey.currentState;
@@ -41,28 +51,35 @@ class AddProduct extends HookWidget {
         form.save();
 
         notifier.productPostRequest(
+          prevEndPoint: prevEndPoint,
           endPoint:
               isHasProduct ? '/update_product.php' : '/create_product.php',
-          id: isHasProduct ? product.id : productId,
-          catName: catName,
+          id: productId,
           name: productName,
           quanitity: quantity,
+          catId: catId,
           sellPrice: price,
           desc: desc,
           createDate: calendarController.selectedDate.toString(),
         );
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Add Product Succesfully'),
-          ),
-        );
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => NavigationTabBar(),
-          ),
-        );
+        Navigator.pop(context);
+        // notifier.loading
+        //     ? showDialog(
+        //         context: context,
+        //         builder: (_) => AlertDialog(
+        //           content: Container(
+        //             height: 70,
+        //             width: 70,
+        //             child: Center(child: CircularProgressIndicator()),
+        //           ),
+        //         ),
+        //       )
+        //     : ScaffoldMessenger.of(context).showSnackBar(
+        //         SnackBar(
+        //           content: Text('Add Product Succesfully'),
+        //         ),
+        //       );
+        // Navigator.pop(context);
       } else {
         return ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -96,24 +113,13 @@ class AddProduct extends HookWidget {
                       message: 'Please Choose A Category',
                       onSaved: (value) {
                         if (value != null) {
-                          catName = value;
+                          catId = value;
                         }
                       },
                       onChanged: (value) {
                         print(value);
                       },
                     ),
-                    isHasProduct
-                        ? SizedBox()
-                        : myForm(
-                            initialValue: isHasProduct ? product.id : '',
-                            labelTitle: 'Product Id',
-                            message: 'Please input number',
-                            keyBoardType: TextInputType.number,
-                            onSaved: (value) {
-                              productId = value;
-                            },
-                          ),
                     myForm(
                       initialValue: isHasProduct ? product.name : "",
                       labelTitle: 'Product Name',
@@ -193,6 +199,7 @@ class AddProduct extends HookWidget {
           child: TextButton(
             onPressed: () {
               _saveForm();
+              notifier.load(prevEndPoint);
             },
             child: Container(
               width: double.infinity,

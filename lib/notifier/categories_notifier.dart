@@ -6,6 +6,7 @@ import 'package:my_stock/network/http_service.dart';
 
 class CategoriesNotifier extends ChangeNotifier {
   bool loading = false;
+  bool isCatExist = false;
   HttpService htpp = HttpService();
 
   CategoryModel categoryModel;
@@ -13,7 +14,6 @@ class CategoriesNotifier extends ChangeNotifier {
 
   load() async {
     Response response;
-
     try {
       setLoading(true);
       response = await htpp.getRequest(endpoint: '/get_categories.php');
@@ -21,20 +21,56 @@ class CategoriesNotifier extends ChangeNotifier {
       if (response.statusCode == 200) {
         categoryModel = CategoryModel.fromMap(response.data);
         categories = categoryModel.categories;
-      }else 
+      } else
         print("Error Server problems");
     } catch (e) {
       print(e.message);
     }
   }
 
+  categoryPostRequest({
+    String endPoint,
+    String name,
+    String id,
+  }) async {
+    Response response;
+    HttpService http = HttpService();
+    setLoading(true);
+    try {
+      response = await http.postRequest(
+        endPoint: endPoint,
+        id: id,
+        name: name,
+      );
+      if (response.statusCode >= 200 && response.statusCode <= 299) {
+        print("product created succesfully");
+        print(response.data);
+      }
+      if (response.statusCode == 400) {
+        setCatExist(true);
+      }
+    } on DioError catch (e) {
+      setLoading(false);
+      print(e.error);
+    }
+    this.load();
+    setLoading(false);
+  }
+
   setLoading(bool loading) {
     this.loading = loading;
     notifyListeners();
   }
+
+  setCatExist(bool exist) {
+    this.isCatExist = exist;
+    notifyListeners();
+  }
 }
 
-final categoryNotifier = ChangeNotifierProvider<CategoriesNotifier>((ref){
-  var notifier = CategoriesNotifier()..load();
-  return notifier;
-},);
+final categoryNotifier = ChangeNotifierProvider<CategoriesNotifier>(
+  (ref) {
+    var notifier = CategoriesNotifier()..load();
+    return notifier;
+  },
+);

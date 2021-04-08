@@ -49,8 +49,8 @@ class ProductNotifier extends ChangeNotifier {
   }) async {
     Response response;
     HttpService http = HttpService();
+    setLoading(true);
     try {
-      setLoading(true);
       response = await http.postRequest(
         endPoint: endPoint,
         id: id,
@@ -61,7 +61,6 @@ class ProductNotifier extends ChangeNotifier {
         desc: desc,
         createDate: createDate,
       );
-      setLoading(false);
       if (response.statusCode >= 200 && response.statusCode <= 299) {
         print("product created succesfully");
         print(response.data);
@@ -69,10 +68,10 @@ class ProductNotifier extends ChangeNotifier {
         print("There is some problem status code not 200");
       }
     } on Exception catch (e) {
-      setLoading(false);
       print(e);
     }
-    notifyListeners();
+    setLoading(false);
+    // notifyListeners();
   }
 
   setProductList(List<Product> products) {

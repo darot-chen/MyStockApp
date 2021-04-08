@@ -35,7 +35,11 @@ class Home extends HookWidget {
                   categories.length + 1,
                   (index) {
                     if (index == categories.length) {
-                      return catCard(context: context, catName: 'All Products');
+                      return catCard(
+                        context: context,
+                        catName: 'All Products',
+                        isLastIndex: true,
+                      );
                     }
                     return catCard(
                       context: context,
@@ -114,6 +118,7 @@ class Home extends HookWidget {
     BuildContext context,
     String catName,
     String catId,
+    bool isLastIndex = false,
   }) {
     var notifier = useProvider(categoryNotifier);
     var proNotifier = useProvider(
@@ -127,69 +132,72 @@ class Home extends HookWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: ElevatedButton(
-        onLongPress: () {
-          !isHasProduct
-              ? showDialog(
-                  context: context,
-                  builder: (context) => alertDialog(
-                    context: context,
-                    title: 'Update',
-                    rButtonText: 'Update',
-                    catName: catName,
-                  ),
-                )
-              : showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text(
-                      'Delete',
-                      style: TextStyle(
-                        color: Colors.red,
-                      ),
-                    ),
-                    content: Wrap(
-                      direction: Axis.vertical,
-                      children: [
-                        Container(
-                          child: Row(
+        onLongPress: isLastIndex
+            ? null
+            : () {
+                !isHasProduct
+                    ? showDialog(
+                        context: context,
+                        builder: (context) => alertDialog(
+                          context: context,
+                          title: 'Update',
+                          rButtonText: 'Update',
+                          catName: catName,
+                        ),
+                      )
+                    : showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text(
+                            'Delete',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ),
+                          ),
+                          content: Wrap(
+                            direction: Axis.vertical,
                             children: [
-                              Text('Do you want to delete '),
-                              Text(
-                                '$catName ',
-                                style: TextStyle(color: Colors.red),
+                              Container(
+                                child: Row(
+                                  children: [
+                                    Text('Do you want to delete '),
+                                    Text(
+                                      '$catName ',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                    Text('?'),
+                                  ],
+                                ),
                               ),
-                              Text('?'),
+                              Container(
+                                width: 250,
+                                child: TextButton(
+                                  onPressed: () {
+                                    notifier.categoryPostRequest(
+                                      endPoint: '/delete_category.php',
+                                      id: catId,
+                                    );
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    'Delete',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                      Colors.red,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                        Container(
-                          width: 250,
-                          child: TextButton(
-                            onPressed: () {
-                              notifier.categoryPostRequest(
-                                endPoint: '/delete_category.php',
-                                id: catId,
-                              );
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              'Delete',
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                Colors.red,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-        },
+                      );
+              },
         onPressed: () {
           Navigator.of(context, rootNavigator: true).push(
             MaterialPageRoute(

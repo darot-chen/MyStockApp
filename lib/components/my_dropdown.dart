@@ -33,7 +33,7 @@ class MyDropDown extends StatelessWidget {
             child: Text(
               items[index].name,
             ),
-            value: items[index].name,
+            value: items[index].id,
           );
         },
       ),

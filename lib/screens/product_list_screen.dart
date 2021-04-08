@@ -27,50 +27,58 @@ class ProductListScreen extends HookWidget {
         : '/get_products.php';
     var notifier = useProvider(productNotifier(endPoint));
     var products = notifier.productsList;
-
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context, rootNavigator: true).push(
-            MaterialPageRoute(
-              builder: (context) => AddProduct(),
-            ),
-          );
-        },
-        foregroundColor: Colors.white,
-        child: Icon(Icons.add),
-      ),
-      appBar: MyAppBar(
-        title: title,
-        action: [
-          buildActionBtn(icon: Icons.search),
-          Padding(
-            padding: const EdgeInsets.only(right: 15.0),
-            child: buildActionBtn(
-              icon: Icons.filter_list,
-              onTap: () {
-                displayBottomSheet(context);
-              },
-            ),
-          ),
-        ],
-      ),
-      body: notifier.loading
-          ? Center(child: CircularProgressIndicator())
-          : products != null
-              ? RefreshIndicator(
-                  onRefresh: () {
-                    return notifier.load(endPoint);
-                  },
-                  child: buildProductList(
-                    isLoading: notifier.loading,
-                    context: context,
-                    productList: products,
-                  ))
-              : Center(
-                  child: Text("No User Object"),
+    if (notifier.loading)
+      return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    else {
+      notifier.load(endPoint);
+      return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context, rootNavigator: true).push(
+              MaterialPageRoute(
+                builder: (context) => AddProduct(
+                  prevEndPoint: endPoint,
                 ),
-    );
+              ),
+            );
+          },
+          foregroundColor: Colors.white,
+          child: Icon(Icons.add),
+        ),
+        appBar: MyAppBar(
+          title: title,
+          action: [
+            buildActionBtn(icon: Icons.search),
+            Padding(
+              padding: const EdgeInsets.only(right: 15.0),
+              child: buildActionBtn(
+                icon: Icons.filter_list,
+                onTap: () {
+                  displayBottomSheet(context);
+                },
+              ),
+            ),
+          ],
+        ),
+        body: products != null
+            ? RefreshIndicator(
+                onRefresh: () {
+                  return notifier.load(endPoint);
+                },
+                child: buildProductList(
+                  isLoading: notifier.loading,
+                  context: context,
+                  productList: products,
+                ))
+            : Center(
+                child: Text("No User Object"),
+              ),
+      );
+    }
   }
 
   ListView buildProductList({

@@ -27,6 +27,7 @@ class HttpService {
     String quanitity,
     String sellPrice,
     String catName,
+    String catId,
     String desc,
     String createDate,
   }) async {
@@ -42,6 +43,7 @@ class HttpService {
           "cat_name": catName,
           "desc": desc,
           "create_date": createDate,
+          "cat_id": catId,
         },
         options: Options(headers: {'content-type' : 'application/json'}),
     );

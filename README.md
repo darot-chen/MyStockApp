@@ -1,16 +1,25 @@
-# my_stock
+# MyStock
 
-A new Flutter project.
+It is an stock managnment app that you can upload product in and out. You can track products transactions. This project is built with MySQL as the database and use PHP to query local database. 
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+In this project, we use flutter 2.2.3. If you have different version, you should consider [install FVM](https://soksereyphon8.medium.com/flutter-version-management-3c318c4ff97d).
 
-A few resources to get you started if this is your first Flutter project:
+### Prerequisites
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+```
+fvm flutter pub get
+fvm flutter run
+```
+## Built with
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* [Flutter 2.2.3](https://flutter.dev) - The framework used
+* [Dart](https://dart.dev/) - The language used
+
+## Demo
+
+
+https://user-images.githubusercontent.com/64341213/134203087-afe2c3d2-7466-49fb-9e43-9f521e389cf0.mp4
+
+
